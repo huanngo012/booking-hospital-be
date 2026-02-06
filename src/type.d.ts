@@ -7,6 +7,11 @@ declare global {
   type ParamsBodyRequest<P, B> = Request<P, {}, B>
 }
 
+export interface BaseDocument {
+  _id: Types.ObjectId
+  deletedAt?: Date | null
+}
+
 export enum RoleCode {
   ADMIN = 'ADMIN',
   HOST = 'HOST',
@@ -179,8 +184,7 @@ export interface Doctor {
   totalRatings: number
 }
 
-export interface Category {
-  _id: Types.ObjectId
+export interface Category extends BaseDocument {
   tag: string
 }
 
