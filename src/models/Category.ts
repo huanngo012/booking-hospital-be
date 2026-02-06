@@ -10,7 +10,8 @@ const schema = new Schema<Category>(
       type: String,
       required: true,
       unique: true,
-      index: true
+      index: true,
+      trim: true
     }
   },
   {

@@ -1,4 +1,11 @@
 import { Types } from 'mongoose'
+import { Request } from 'express'
+
+declare global {
+  type BodyRequest<T> = Request<{}, {}, T>
+  type ParamsRequest<P> = Request<P>
+  type ParamsBodyRequest<P, B> = Request<P, {}, B>
+}
 
 export enum RoleCode {
   ADMIN = 'ADMIN',
