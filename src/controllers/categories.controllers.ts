@@ -1,20 +1,28 @@
 import asyncHandler from 'express-async-handler'
 import { Response } from 'express'
-import { createCategoryService, deleteCategoryService } from '~/services/categories.services'
-import { CreateCategoryInput, DeleteategoryInput } from '~/validations/category.schema'
+import { createCategoryService, deleteCategoryService, updateCategoryService } from '~/services/categories.services'
+import { CategoryBody, CategoryParams } from '~/validations/category.schema'
 
-export const createCategory = asyncHandler(async (req: BodyRequest<CreateCategoryInput>, res: Response) => {
-  const { tag } = req.body
-  const response = await createCategoryService(tag)
+export const createCategory = asyncHandler(async (req: BodyRequest<CategoryBody>, res: Response) => {
+  const response = await createCategoryService(req.body)
   res.status(201).json({
     success: true,
     data: response
   })
 })
 
-export const deleteCategory = asyncHandler(async (req: ParamsRequest<DeleteategoryInput>, res: Response) => {
-  const { id } = req.params
-  await deleteCategoryService(id)
+export const updateCategory = asyncHandler(
+  async (req: ParamsBodyRequest<CategoryParams, CategoryBody>, res: Response) => {
+    const response = await updateCategoryService(req.params, req.body)
+    res.status(200).json({
+      success: true,
+      data: response
+    })
+  }
+)
+
+export const deleteCategory = asyncHandler(async (req: ParamsRequest<CategoryParams>, res: Response) => {
+  await deleteCategoryService(req.params)
   res.status(200).json({
     success: true
   })

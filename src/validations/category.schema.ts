@@ -1,29 +1,38 @@
 import { z } from 'zod'
 
-export const categoryTagSchema = z
-  .string({ message: 'Vui lòng nhập tag' })
+const categoryTagSchema = z
+  .string({ message: 'Vui lòng nhập đúng kiểu dữ liệu' })
   .trim()
   .min(1, 'Vui lòng nhập đầy đủ')
   .max(50, 'Tag tối đa 50 ký tự')
 
-export const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'ID không hợp lệ')
+const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'ID không hợp lệ')
+
+const categoryParamsSchema = z.object({
+  _id: objectIdSchema
+})
+
+const categoryBodySchema = z.object(
+  {
+    tag: categoryTagSchema
+  },
+  {
+    message: 'Vui lòng nhập dữ liệu'
+  }
+)
 
 export const createCategorySchema = z.object({
-  body: z.object(
-    {
-      tag: categoryTagSchema
-    },
-    {
-      message: 'Vui lòng nhập dữ liệu'
-    }
-  )
+  body: categoryBodySchema
+})
+
+export const updateCategorySchema = z.object({
+  params: categoryParamsSchema,
+  body: categoryBodySchema.partial()
 })
 
 export const deleteCategorySchema = z.object({
-  params: z.object({
-    id: objectIdSchema
-  })
+  params: categoryParamsSchema
 })
 
-export type CreateCategoryInput = z.infer<typeof createCategorySchema>['body']
-export type DeleteategoryInput = z.infer<typeof deleteCategorySchema>['params']
+export type CategoryParams = z.infer<typeof categoryParamsSchema>
+export type CategoryBody = z.infer<typeof categoryBodySchema>
