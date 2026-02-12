@@ -1,7 +1,7 @@
 import express from 'express'
 import { validate } from '~/middlewares/validation.middlewares'
 import { createCategory, deleteCategory, updateCategory } from '~/controllers/categories.controllers'
-import { createCategorySchema, deleteCategorySchema, updateCategorySchema } from '~/validations/category.schema'
+import { createCategorySchema, deleteCategorySchema, updateCategorySchema } from '~/validators/category.schema'
 
 const router = express.Router()
 

@@ -1,7 +1,14 @@
 import asyncHandler from 'express-async-handler'
 import { Response } from 'express'
 import { createCategoryService, deleteCategoryService, updateCategoryService } from '~/services/categories.services'
-import { CategoryBody, CategoryParams } from '~/validations/category.schema'
+import { CategoryBody, CategoryParams, CategoryQuery } from '~/validators/category.schema'
+
+// export const getCategories = asyncHandler(async (req: QueryRequest<CategoryQuery>, res: Response) => {
+//   const response = await res.status(201).json({
+//     success: true,
+//     data: response
+//   })
+// })
 
 export const createCategory = asyncHandler(async (req: BodyRequest<CategoryBody>, res: Response) => {
   const response = await createCategoryService(req.body)

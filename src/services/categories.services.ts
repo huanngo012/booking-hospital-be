@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import { CategoryModel } from '~/models/Category'
 import { handleMongoDuplicateError } from '~/utils/helpers'
-import { CategoryBody, CategoryParams } from '~/validations/category.schema'
+import { CategoryBody, CategoryParams } from '~/validators/category.schema'
 
 export const createCategoryService = async (payload: CategoryBody) => {
   try {

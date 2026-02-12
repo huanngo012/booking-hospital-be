@@ -7,6 +7,7 @@ export const notFound = (req: Request, res: Response, next: NextFunction) => {
 }
 
 export const errorHandler = (error: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  void _next
   if (error instanceof ZodError) {
     return res.status(400).json({
       success: false,
@@ -20,7 +21,7 @@ export const errorHandler = (error: unknown, _req: Request, res: Response, _next
       message: error.message
     })
   }
-
+  console.log(res)
   return res.status(500).json({
     success: false,
     message: 'Internal server error'

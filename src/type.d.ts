@@ -2,9 +2,11 @@ import { Types } from 'mongoose'
 import { Request } from 'express'
 
 declare global {
-  type BodyRequest<T> = Request<{}, {}, T>
+  type BodyRequest<B> = Request<Record<string, never>, unknown, B>
   type ParamsRequest<P> = Request<P>
-  type ParamsBodyRequest<P, B> = Request<P, {}, B>
+  type ParamsBodyRequest<P, B> = Request<P, unknown, B>
+  type QueryRequest<Q> = Request<Record<string, never>, unknown, unknown, Q>
+  type ParamsQueryRequest<P, Q> = Request<P, unknown, unknown, Q>
 }
 
 export interface BaseDocument {
@@ -186,6 +188,7 @@ export interface Doctor {
 
 export interface Category extends BaseDocument {
   tag: string
+  tag_normalized: string
 }
 
 export interface Specialty {
