@@ -10,6 +10,7 @@ export const handleMongoDuplicateError = (error: unknown, message = 'Dữ liệu
 
 export const removeVietnameseTones = (text: string = '') =>
   text
+    .trim()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/đ/g, 'd')

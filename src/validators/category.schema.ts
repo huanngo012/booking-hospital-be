@@ -27,7 +27,7 @@ const categoryBodySchema = z.object(
 )
 const getCategoriesQuerySchema = z
   .object({
-    tag: z.string().trim().min(1).optional(),
+    tag: z.string().optional(),
     sort: z.string().optional(),
     fields: z.string().optional()
   })
@@ -35,6 +35,9 @@ const getCategoriesQuerySchema = z
 
 export const getCategoriesSchema = z.object({
   query: getCategoriesQuerySchema
+})
+export const getCategorySchema = z.object({
+  params: categoryParamsSchema
 })
 export const createCategorySchema = z.object({
   body: categoryBodySchema
