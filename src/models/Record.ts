@@ -1,5 +1,6 @@
 import { Schema, Types, model } from 'mongoose'
-import { DosageTime, MedicineInstruction, Record } from '~/type'
+import { DosageTime, MedicineInstruction } from '~/constants/enums'
+import { Record } from '~/types/record.type'
 
 export const DOCUMENT_NAME = 'Record'
 export const COLLECTION_NAME = 'records'

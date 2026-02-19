@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
-import { RoleCode, User } from '~/type'
+import { RoleCode } from '~/constants/enums'
+import { User } from '~/types/user.type'
 
 export const DOCUMENT_NAME = 'User'
 export const COLLECTION_NAME = 'users'

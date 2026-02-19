@@ -1,5 +1,5 @@
-import { HydratedDocument, Query, Schema, model } from 'mongoose'
-import { Category } from '~/type'
+import { Query, Schema, model } from 'mongoose'
+import { Category, CategoryDocument } from '~/types/category.type'
 import { removeVietnameseTones } from '~/utils/helpers'
 
 export const DOCUMENT_NAME = 'Category'
@@ -30,7 +30,7 @@ schema.pre(/^find/, function (this: Query<Category, Category>) {
   this.where({ deletedAt: null })
 })
 
-schema.pre('save', function (this: HydratedDocument<Category>) {
+schema.pre('save', function (this: CategoryDocument) {
   if (this.isModified('tag')) {
     this.tag_normalized = removeVietnameseTones(this.tag)
   }

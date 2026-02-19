@@ -1,5 +1,6 @@
 import { Schema, Types, model } from 'mongoose'
-import { Booking, BookingStatus } from '~/type'
+import { BookingStatus } from '~/constants/enums'
+import { Booking } from '~/types/booking.type'
 
 export const DOCUMENT_NAME = 'Booking'
 export const COLLECTION_NAME = 'bookings'

@@ -1,5 +1,6 @@
 import { Schema, Types, model } from 'mongoose'
-import { Schedule, TimeSlotCode } from '~/type'
+import { TimeSlotCode } from '~/constants/enums'
+import { Schedule } from '~/types/schedule.type'
 
 export const DOCUMENT_NAME = 'Schedule'
 export const COLLECTION_NAME = 'schedules'

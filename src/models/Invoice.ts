@@ -1,5 +1,6 @@
 import { Schema, Types, model } from 'mongoose'
-import { Invoice, InvoiceItemType, InvoiceStatus } from '~/type'
+import { InvoiceItemType, InvoiceStatus } from '~/constants/enums'
+import { Invoice } from '~/types/invoice.type'
 
 export const DOCUMENT_NAME = 'Invoice'
 export const COLLECTION_NAME = 'invoices'

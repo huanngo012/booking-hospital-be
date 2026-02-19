@@ -1,6 +1,6 @@
 import express from 'express'
 import { errorHandler, notFound } from '~/middlewares/error.middlewares'
-import categories from './categories.routes'
+import categories from './categories.route'
 
 const router = express.Router()
 

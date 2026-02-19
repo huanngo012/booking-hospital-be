@@ -1,5 +1,5 @@
 import { Schema, Types, model } from 'mongoose'
-import { Medicine } from '~/type'
+import { Medicine } from '~/types/medicine.type'
 
 export const DOCUMENT_NAME = 'Medicine'
 export const COLLECTION_NAME = 'medicines'
