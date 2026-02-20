@@ -1,6 +1,6 @@
 import express from 'express'
 import { validateRequestBody, validateRequestParams, validateRequestQuery } from '~/middlewares/validation.middlewares'
-import CategoryController from '~/controllers/categories.controller'
+import CategoryController from '~/controllers/category.controller'
 import { categoryBodySchema, categoryQuerySchema } from '~/schemas/category.schema'
 import { paramsSchema } from '~/schemas/common.schema'
 

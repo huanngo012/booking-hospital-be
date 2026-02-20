@@ -12,7 +12,7 @@ const schema = new Schema<Category>(
       required: true,
       trim: true
     },
-    tag_normalized: {
+    tagNormalized: {
       type: String,
       trim: true,
       select: false
@@ -35,7 +35,7 @@ schema.pre(/^find/, function (this: Query<Category, Category>) {
 
 schema.pre('save', function (this: CategoryDocument) {
   if (this.isModified('tag')) {
-    this.tag_normalized = removeVietnameseTones(this.tag)
+    this.tagNormalized = removeVietnameseTones(this.tag)
   }
 })
 

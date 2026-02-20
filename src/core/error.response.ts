@@ -50,6 +50,7 @@ class UnprocessableEntityError extends ErrorResponse {
   }
 }
 export {
+  ErrorResponse,
   BadRequestError,
   ConflictRequestError,
   AuthFailureError,

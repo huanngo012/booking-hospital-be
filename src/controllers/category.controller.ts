@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import { Response } from 'express'
 import { CategoryBody, CategoryParams, CategoryQuery } from '~/schemas/category.schema'
-import CategoryService from '~/services/categories.service'
+import CategoryService from '~/services/category.service'
 import { CREATED, DELETED, OK } from '~/core/success.response'
 import { Category } from '~/types/category.type'
 

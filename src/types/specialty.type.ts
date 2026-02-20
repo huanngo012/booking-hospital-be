@@ -3,7 +3,7 @@ import { BaseDocument } from './base.type'
 
 export interface Specialty extends BaseDocument {
   name: string
-  name_normalized: string
+  nameNormalized: string
   description: string
   image: string
 }

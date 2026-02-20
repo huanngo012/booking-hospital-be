@@ -1,6 +1,6 @@
 import express from 'express'
 import { validateRequestBody, validateRequestParams, validateRequestQuery } from '~/middlewares/validation.middlewares'
-import SpecialtyController from '~/controllers/specialties.controller'
+import SpecialtyController from '~/controllers/specialty.controller'
 import { specialtyBodySchema, specialtyQuerySchema } from '~/schemas/specialty.schema'
 import { paramsSchema } from '~/schemas/common.schema'
 

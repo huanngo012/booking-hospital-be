@@ -3,7 +3,7 @@ import { BaseDocument } from './base.type'
 
 export interface Category extends BaseDocument {
   tag: string
-  tag_normalized: string
+  tagNormalized: string
 }
 
 export type CategoryDocument = HydratedDocument<Category>

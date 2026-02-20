@@ -10,7 +10,7 @@ const CategoryService = {
     if (tag) {
       filterQuery = {
         ...filterQuery,
-        tag_normalized: {
+        tagNormalized: {
           $regex: `^${removeVietnameseTones(tag)}`
         }
       }

@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import { Response } from 'express'
 import { CREATED, DELETED, OK } from '~/core/success.response'
-import SpecialtyService from '~/services/specialties.service'
+import SpecialtyService from '~/services/specialty.service'
 import { SpecialtyBody, SpecialtyParams, SpecialtyQuery } from '~/schemas/specialty.schema'
 import { Specialty } from '~/types/specialty.type'
 

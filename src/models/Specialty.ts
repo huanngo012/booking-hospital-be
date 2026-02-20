@@ -12,7 +12,7 @@ const schema = new Schema<Specialty>(
       required: true,
       trim: true
     },
-    name_normalized: {
+    nameNormalized: {
       type: String,
       trim: true,
       select: false
@@ -41,7 +41,7 @@ schema.pre(/^find/, function (this: Query<Specialty, Specialty>) {
 
 schema.pre('save', function (this: SpecialtyDocument) {
   if (this.isModified('name')) {
-    this.name_normalized = removeVietnameseTones(this.name)
+    this.nameNormalized = removeVietnameseTones(this.name)
   }
 })
 

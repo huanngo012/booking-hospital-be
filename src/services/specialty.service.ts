@@ -10,7 +10,7 @@ const SpecialtyService = {
     if (name) {
       filterQuery = {
         ...filterQuery,
-        name_normalized: {
+        nameNormalized: {
           $regex: `^${removeVietnameseTones(name)}`
         }
       }
