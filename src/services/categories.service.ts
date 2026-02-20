@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import { CategoryModel } from '~/models/Category'
 import { handleMongoDuplicateError, removeVietnameseTones } from '~/utils/helpers'
-import { CategoryBody, CategoryParams, CategoryQuery } from '~/validators/category.schema'
+import { CategoryBody, CategoryParams, CategoryQuery } from '~/schemas/category.schema'
 
 const CategoryService = {
   getCategoriesService: async (queries: CategoryQuery) => {

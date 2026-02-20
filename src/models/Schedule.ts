@@ -49,7 +49,8 @@ const schema = new Schema<Schedule>(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
   }
 )
 

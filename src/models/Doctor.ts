@@ -47,7 +47,8 @@ const schema = new Schema<Doctor>(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
   }
 )
 

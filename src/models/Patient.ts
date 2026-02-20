@@ -28,7 +28,8 @@ const schema = new Schema<Patient>(
     clinicArr: [{ type: Types.ObjectId, ref: 'Clinic' }]
   },
   {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
   }
 )
 

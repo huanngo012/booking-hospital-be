@@ -14,15 +14,18 @@ const schema = new Schema<Category>(
     },
     tag_normalized: {
       type: String,
-      trim: true
+      trim: true,
+      select: false
     },
     deletedAt: {
       type: Date,
-      default: null
+      default: null,
+      select: false
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
   }
 )
 
@@ -37,6 +40,9 @@ schema.pre('save', function (this: CategoryDocument) {
 })
 
 schema.index({ deletedAt: 1 })
-schema.index({ tag_normalized: 1 }, { unique: true, partialFilterExpression: { deletedAt: null } })
+schema.index(
+  { tag: 1 },
+  { unique: true, collation: { locale: 'vi', strength: 2 }, partialFilterExpression: { deletedAt: null } }
+)
 
 export const CategoryModel = model<Category>(DOCUMENT_NAME, schema, COLLECTION_NAME)

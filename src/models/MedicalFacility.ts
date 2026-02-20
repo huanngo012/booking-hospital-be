@@ -77,7 +77,7 @@ const schema = new Schema<MedicalFacility>(
       default: 0
     }
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 )
 
 export const MedicalFacilityModel = model<MedicalFacility>(DOCUMENT_NAME, schema, COLLECTION_NAME)

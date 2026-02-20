@@ -12,7 +12,6 @@ class SuccessResponse<T = null> {
     this.data = data
   }
   send = (res: Response) => {
-    console.log(this)
     return res.status(this.status).json(this)
   }
 }

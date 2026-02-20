@@ -60,7 +60,8 @@ const schema = new Schema<Booking>(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
   }
 )
 
