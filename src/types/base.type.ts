@@ -2,6 +2,7 @@ import { Types } from 'mongoose'
 import { DosageTime, InvoiceItemType, MedicineInstruction, TimeSlotCode } from '~/constants/enums'
 
 export interface BaseDocument {
+  _id: string
   deletedAt?: Date | null
 }
 export interface FacilityWorkingTime {

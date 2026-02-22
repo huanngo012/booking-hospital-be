@@ -35,6 +35,12 @@ const schema = new Schema<Specialty>(
   }
 )
 
+schema.index({ deletedAt: 1 })
+schema.index(
+  { name: 1 },
+  { unique: true, collation: { locale: 'vi', strength: 2 }, partialFilterExpression: { deletedAt: null } }
+)
+
 schema.pre(/^find/, function (this: Query<Specialty, Specialty>) {
   this.where({ deletedAt: null })
 })
@@ -44,11 +50,5 @@ schema.pre('save', function (this: SpecialtyDocument) {
     this.nameNormalized = removeVietnameseTones(this.name)
   }
 })
-
-schema.index({ deletedAt: 1 })
-schema.index(
-  { name: 1 },
-  { unique: true, collation: { locale: 'vi', strength: 2 }, partialFilterExpression: { deletedAt: null } }
-)
 
 export const SpecialtyModel = model<Specialty>(DOCUMENT_NAME, schema, COLLECTION_NAME)

@@ -1,5 +1,5 @@
 import express from 'express'
-import { validateRequestBody, validateRequestParams, validateRequestQuery } from '~/middlewares/validation.middlewares'
+import { validateRequestBody, validateRequestParams, validateRequestQuery } from '~/middlewares/validation.middleware'
 import SpecialtyController from '~/controllers/specialty.controller'
 import { specialtyBodySchema, specialtyQuerySchema } from '~/schemas/specialty.schema'
 import { paramsSchema } from '~/schemas/common.schema'

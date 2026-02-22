@@ -17,11 +17,9 @@ export const specialtyBodySchema = z.object(
     message: 'Vui lòng nhập dữ liệu'
   }
 )
-export const specialtyQuerySchema = z
-  .object({
-    name: z.string().optional()
-  })
-  .merge(querySchema)
+export const specialtyQuerySchema = querySchema.extend({
+  name: z.string().optional()
+})
 
 export type SpecialtyParams = z.infer<typeof paramsSchema>
 export type SpecialtyBody = z.infer<typeof specialtyBodySchema>

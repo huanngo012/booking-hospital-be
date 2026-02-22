@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import { Request, Response } from 'express'
-import { LoginBody, RegisterBody } from '~/schemas/auth.schema'
+import { LoginBody, ProfileBody, RegisterBody } from '~/schemas/auth.schema'
 import AuthService from '~/services/auth.service'
 import { User } from '~/types/user.type'
 import { DELETED, OK } from '~/core/success.response'
@@ -10,9 +10,9 @@ const AuthController = {
     const response = await AuthService.register(req.body)
     new OK<User>({ data: response }).send(res)
   }),
+
   login: asyncHandler(async (req: BodyRequest<LoginBody>, res: Response) => {
-    const response = await AuthService.login(req.body)
-    const { accessToken, refreshToken, user } = response
+    const { accessToken, refreshToken, user } = await AuthService.login(req.body)
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -22,15 +22,40 @@ const AuthController = {
     res.setHeader('Authorization', `Bearer ${accessToken}`)
     new OK<User>({ data: user }).send(res)
   }),
+
   logout: asyncHandler(async (req: Request, res: Response) => {
-    const refreshToken = req.cookies.refreshToken
-    await AuthService.logout(refreshToken)
+    const token = req.cookies.refreshToken
+    await AuthService.logout(token)
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
       sameSite: 'none'
     })
     new DELETED().send(res)
+  }),
+
+  refreshToken: asyncHandler(async (req: Request, res: Response) => {
+    const token = req.cookies.refreshToken
+    const { accessToken, refreshToken } = await AuthService.refreshToken(token)
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: true,
+      sameSite: 'none'
+    })
+    new OK<{}>({ data: { accessToken } }).send(res)
+  }),
+
+  getCurrentUser: asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?._id as string
+    const response = await AuthService.getCurrentUser(userId)
+    new OK<User>({ data: response }).send(res)
+  }),
+
+  updateCurrentUser: asyncHandler(async (req: BodyRequest<ProfileBody>, res: Response) => {
+    const userId = req.user?._id as string
+    const response = await AuthService.updateCurrentUser(userId, req.body)
+    new OK<User>({ data: response }).send(res)
   })
 }
 

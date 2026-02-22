@@ -15,11 +15,9 @@ export const categoryBodySchema = z.object(
     message: 'Vui lòng nhập dữ liệu'
   }
 )
-export const categoryQuerySchema = z
-  .object({
-    tag: z.string().optional()
-  })
-  .merge(querySchema)
+export const categoryQuerySchema = querySchema.extend({
+  tag: z.string().optional()
+})
 
 export type CategoryParams = z.infer<typeof paramsSchema>
 export type CategoryBody = z.infer<typeof categoryBodySchema>

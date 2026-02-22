@@ -2,7 +2,6 @@ import { HydratedDocument } from 'mongoose'
 import { BaseDocument } from './base.type'
 
 export interface User extends BaseDocument {
-  _id: string
   name: string
   email: string
   password: string

@@ -1,5 +1,6 @@
-import { Schema, Types, model } from 'mongoose'
-import { MedicalFacility } from '~/types/medical-facility.type'
+import { Query, Schema, Types, model } from 'mongoose'
+import { MedicalFacility, MedicalFacilityDocument } from '~/types/medical-facility.type'
+import { removeVietnameseTones } from '~/utils/helpers'
 
 export const DOCUMENT_NAME = 'MedicalFacility'
 export const COLLECTION_NAME = 'medical_facilities'
@@ -9,8 +10,12 @@ const schema = new Schema<MedicalFacility>(
     name: {
       type: String,
       required: true,
-      unique: true,
-      index: true
+      trim: true
+    },
+    nameNormalized: {
+      type: String,
+      trim: true,
+      select: false
     },
     logo: {
       type: String
@@ -75,9 +80,31 @@ const schema = new Schema<MedicalFacility>(
     totalRatings: {
       type: Number,
       default: 0
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+      select: false
     }
   },
   { timestamps: true, versionKey: false }
 )
+
+schema.index({ deletedAt: 1 })
+schema.index({ hostID: 1 }, { unique: true })
+schema.index(
+  { name: 1 },
+  { unique: true, collation: { locale: 'vi', strength: 2 }, partialFilterExpression: { deletedAt: null } }
+)
+
+schema.pre(/^find/, function (this: Query<MedicalFacility, MedicalFacility>) {
+  this.where({ deletedAt: null })
+})
+
+schema.pre('save', function (this: MedicalFacilityDocument) {
+  if (this.isModified('name')) {
+    this.nameNormalized = removeVietnameseTones(this.name)
+  }
+})
 
 export const MedicalFacilityModel = model<MedicalFacility>(DOCUMENT_NAME, schema, COLLECTION_NAME)

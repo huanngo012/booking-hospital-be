@@ -3,6 +3,7 @@ import { BaseDocument, FacilityWorkingTime, Rating } from './base.type'
 
 export interface MedicalFacility extends BaseDocument {
   name: string
+  nameNormalized: string
   logo?: string
   address: {
     province: string

@@ -30,6 +30,15 @@ export const loginBodySchema = z.object(
     message: 'Vui lòng nhập dữ liệu'
   }
 )
+export const profileBodySchema = z.object({
+  name: userNameSchema.optional(),
+  email: userEmailSchema.optional(),
+  password: userPasswordSchema.optional(),
+  newPassword: userPasswordSchema.optional(),
+  avatar: z.string().optional(),
+  address: z.string().optional()
+})
 
 export type RegisterBody = z.infer<typeof registerBodySchema>
 export type LoginBody = z.infer<typeof loginBodySchema>
+export type ProfileBody = z.infer<typeof profileBodySchema>
