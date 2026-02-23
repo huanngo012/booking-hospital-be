@@ -14,10 +14,14 @@ export const medicalFacilityBodySchema = z.object(
     address: addressSchema,
     images: z.array(z.url('URL không hợp lệ')).optional(),
     description: z.string().optional(),
-    specialtyID: z.array(objectIdSchema).min(1, 'Phải chọn ít nhất 1 chuyên khoa'),
+    specialtyID: z
+      .array(objectIdSchema, { error: 'Phải chọn ít nhất 1 chuyên khoa' })
+      .min(1, 'Phải chọn ít nhất 1 chuyên khoa'),
     categoryID: objectIdSchema,
     hostID: objectIdSchema,
-    workingTimes: z.array(workingTimeSchema).min(1, 'Phải có ít nhất 1 ngày làm việc')
+    workingTimes: z
+      .array(workingTimeSchema, { error: 'Phải chọn ít nhất 1 ngày làm việc' })
+      .min(1, 'Phải có ít nhất 1 ngày làm việc')
   },
   {
     message: 'Vui lòng nhập dữ liệu'

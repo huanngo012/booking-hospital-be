@@ -4,6 +4,7 @@ import { DosageTime, InvoiceItemType, MedicineInstruction, TimeSlotCode } from '
 export interface BaseDocument {
   _id: string
   deletedAt?: Date | null
+  slug?: string
 }
 export interface FacilityWorkingTime {
   dayOfWeek: number

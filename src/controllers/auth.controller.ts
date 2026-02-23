@@ -43,7 +43,9 @@ const AuthController = {
       secure: true,
       sameSite: 'none'
     })
-    new OK<{}>({ data: { accessToken } }).send(res)
+    new OK<{ accessToken: string }>({
+      data: { accessToken }
+    }).send(res)
   }),
 
   getCurrentUser: asyncHandler(async (req: Request, res: Response) => {

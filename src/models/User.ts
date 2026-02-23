@@ -8,7 +8,7 @@ import { Model } from 'mongoose'
 export const DOCUMENT_NAME = 'User'
 export const COLLECTION_NAME = 'users'
 
-const schema = new Schema<User, Model<User, {}, UserMethods>>(
+const schema = new Schema<User, Model<User, unknown, UserMethods>>(
   {
     name: {
       type: String,
@@ -26,7 +26,8 @@ const schema = new Schema<User, Model<User, {}, UserMethods>>(
       select: false
     },
     avatar: {
-      type: String
+      type: String,
+      default: ''
     },
     address: {
       type: String,
@@ -35,21 +36,18 @@ const schema = new Schema<User, Model<User, {}, UserMethods>>(
     role: {
       type: String,
       enum: Object.values(RoleCode),
-      default: RoleCode.USER,
-      select: false
-    },
-    isBlocked: {
-      type: Boolean,
-      default: false,
-      select: false
-    },
-    refreshToken: {
-      type: String,
-      select: false
+      default: RoleCode.USER
     },
     isVerified: {
       type: Boolean,
-      default: false,
+      default: false
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false
+    },
+    refreshToken: {
+      type: String,
       select: false
     },
     emailToken: {
@@ -107,12 +105,21 @@ schema.methods = {
 }
 schema.set('toJSON', {
   transform: function (_doc, ret) {
-    const { password, refreshToken, emailToken, passwordResetToken, deletedAt, ...safeData } = ret
+    const {
+      password,
+      refreshToken,
+      emailToken,
+      emailTokenExpires,
+      passwordResetToken,
+      passwordResetExpires,
+      nameNormalized,
+      deletedAt,
+      ...safeData
+    } = ret
     return safeData
   }
 })
-
 schema.index({ deletedAt: 1 })
 schema.index({ email: 1 }, { unique: true, partialFilterExpression: { deletedAt: null } })
 
-export const UserModel = model<User, Model<User, {}, UserMethods>>(DOCUMENT_NAME, schema, COLLECTION_NAME)
+export const UserModel = model<User, Model<User, unknown, UserMethods>>(DOCUMENT_NAME, schema, COLLECTION_NAME)

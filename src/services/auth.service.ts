@@ -17,7 +17,7 @@ const AuthService = {
 
   login: async (payload: LoginBody) => {
     const { email, password } = payload
-    const user = await UserModel.findOne({ email }).select('+password +role')
+    const user = await UserModel.findOne({ email }).select('+password')
     if (!user) throw new BadRequestError('Email không tồn tại')
 
     const isPasswordValid = await user.isCorrectPassword(password)

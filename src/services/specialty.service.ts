@@ -1,4 +1,4 @@
-import createError from 'http-errors'
+import { NotFoundError } from '~/core/error.response'
 import { SpecialtyModel } from '~/models/Specialty'
 import { SpecialtyBody, SpecialtyParams, SpecialtyQuery } from '~/schemas/specialty.schema'
 import { handleMongoDuplicateError, removeVietnameseTones } from '~/utils/helpers'
@@ -11,7 +11,7 @@ const SpecialtyService = {
       filterQuery = {
         ...filterQuery,
         nameNormalized: {
-          $regex: `^${removeVietnameseTones(name)}`
+          $regex: `${removeVietnameseTones(name)}`
         }
       }
     }
@@ -33,7 +33,7 @@ const SpecialtyService = {
   getSpecialtyService: async (_id: SpecialtyParams) => {
     const response = await SpecialtyModel.findById(_id)
     if (!response) {
-      throw createError(404, 'Danh mục không tồn tại')
+      throw new NotFoundError('Chuyên khoa không tồn tại')
     }
     return response
   },
@@ -49,10 +49,12 @@ const SpecialtyService = {
 
   updateSpecialtyService: async (_id: SpecialtyParams, payload: SpecialtyBody) => {
     try {
-      const response = await SpecialtyModel.findOneAndUpdate({ _id }, payload, { new: true })
+      const response = await SpecialtyModel.findById(_id)
       if (!response) {
-        throw createError(404, 'Chuyên khoa không tồn tại')
+        throw new NotFoundError('Chuyên khoa không tồn tại')
       }
+      Object.assign(response, payload)
+      await response.save()
       return response
     } catch (error: unknown) {
       return handleMongoDuplicateError(error, 'Chuyên khoa đã tồn tại')
@@ -62,7 +64,7 @@ const SpecialtyService = {
   deleteSpecialtyService: async (_id: SpecialtyParams) => {
     const response = await SpecialtyModel.findOneAndUpdate({ _id }, { deletedAt: new Date() }, { new: true })
     if (!response) {
-      throw createError(404, 'Chuyên khoa không tồn tại')
+      throw new NotFoundError('Chuyên khoa không tồn tại')
     }
     return response
   }

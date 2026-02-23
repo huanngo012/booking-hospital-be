@@ -1,7 +1,7 @@
-import createError from 'http-errors'
 import { CategoryModel } from '~/models/Category'
 import { handleMongoDuplicateError, removeVietnameseTones } from '~/utils/helpers'
 import { CategoryBody, CategoryParams, CategoryQuery } from '~/schemas/category.schema'
+import { NotFoundError } from '~/core/error.response'
 
 const CategoryService = {
   getCategoriesService: async (queries: CategoryQuery) => {
@@ -11,7 +11,7 @@ const CategoryService = {
       filterQuery = {
         ...filterQuery,
         tagNormalized: {
-          $regex: `^${removeVietnameseTones(tag)}`
+          $regex: `${removeVietnameseTones(tag)}`
         }
       }
     }
@@ -33,7 +33,7 @@ const CategoryService = {
   getCategoryService: async (_id: CategoryParams) => {
     const response = await CategoryModel.findById(_id)
     if (!response) {
-      throw createError(404, 'Danh mục không tồn tại')
+      throw new NotFoundError('Danh mục không tồn tại')
     }
     return response
   },
@@ -49,10 +49,12 @@ const CategoryService = {
 
   updateCategoryService: async (_id: CategoryParams, payload: CategoryBody) => {
     try {
-      const response = await CategoryModel.findOneAndUpdate({ _id }, payload, { new: true })
+      const response = await CategoryModel.findById(_id)
       if (!response) {
-        throw createError(404, 'Danh mục không tồn tại')
+        throw new NotFoundError('Danh mục không tồn tại')
       }
+      Object.assign(response, payload)
+      await response.save()
       return response
     } catch (error: unknown) {
       return handleMongoDuplicateError(error, 'Danh mục đã tồn tại')
@@ -62,7 +64,7 @@ const CategoryService = {
   deleteCategoryService: async (_id: CategoryParams) => {
     const response = await CategoryModel.findOneAndUpdate({ _id }, { deletedAt: new Date() }, { new: true })
     if (!response) {
-      throw createError(404, 'Danh mục không tồn tại')
+      throw new NotFoundError('Danh mục không tồn tại')
     }
     return response
   }

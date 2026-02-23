@@ -1,6 +1,6 @@
 import z from 'zod'
 
-const userEmailSchema = z.string().email({ message: 'Vui lòng nhập đúng định dạng email' }).trim()
+const userEmailSchema = z.email({ message: 'Vui lòng nhập đúng định dạng email' }).trim()
 const userPasswordSchema = z
   .string()
   .min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
