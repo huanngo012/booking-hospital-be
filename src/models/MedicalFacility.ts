@@ -91,7 +91,7 @@ const schema = new Schema<MedicalFacility>(
 )
 
 schema.index({ deletedAt: 1 })
-schema.index({ hostID: 1 }, { unique: true })
+schema.index({ hostID: 1 }, { unique: true, partialFilterExpression: { deletedAt: null } })
 schema.index(
   { name: 1 },
   { unique: true, collation: { locale: 'vi', strength: 2 }, partialFilterExpression: { deletedAt: null } }

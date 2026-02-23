@@ -35,7 +35,7 @@ export const breakTimeSchema = z.object({
 })
 export const workingTimeSchema = z
   .object({
-    dayOfWeek: z.number().int().min(0).max(6),
+    dayOfWeek: z.coerce.number().int().min(0).max(6),
 
     startTime: timeSlotSchema,
     endTime: timeSlotSchema,

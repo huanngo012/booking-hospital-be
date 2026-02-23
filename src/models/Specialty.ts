@@ -68,7 +68,7 @@ schema.pre('save', async function (this: SpecialtyDocument) {
       locale: 'vi'
     })
     const count = await this.model(DOCUMENT_NAME).countDocuments({
-      slug: new RegExp(`^${baseSlug}`)
+      slug: baseSlug
     })
     this.slug = count > 0 ? `${baseSlug}-${count}` : baseSlug
   }
