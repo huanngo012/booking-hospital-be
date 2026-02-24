@@ -13,7 +13,7 @@ export const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'ID không h
 export const addressSchema = z.object(
   {
     province: requiredString('Vui lòng nhập tỉnh/thành phố'),
-    district: requiredString('Vui lòng nhập quận/huyện'),
+    district: z.string().optional(),
     ward: requiredString('Vui lòng nhập phường/xã'),
     detail: requiredString('Vui lòng nhập địa chỉ chi tiết')
   },

@@ -83,7 +83,7 @@ const schema = new Schema<User, Model<User, unknown, UserMethods>>(
   }
 )
 
-schema.pre(/^find/, function (this: Query<User, User>) {
+schema.pre(/^find|count/, function (this: Query<User, User>) {
   this.where({ deletedAt: null })
 })
 

@@ -22,10 +22,10 @@ const schema = new Schema<MedicalFacility>(
       type: String
     },
     address: {
-      province: String,
-      district: String,
-      ward: String,
-      detail: String
+      province: { type: String, default: '' },
+      district: { type: String, default: '' },
+      ward: { type: String, default: '' },
+      detail: { type: String, default: '' }
     },
     images: [
       {
@@ -103,7 +103,7 @@ schema.index(
   { unique: true, collation: { locale: 'vi', strength: 2 }, partialFilterExpression: { deletedAt: null } }
 )
 
-schema.pre(/^find/, function (this: Query<MedicalFacility, MedicalFacility>) {
+schema.pre(/^find|count/, function (this: Query<MedicalFacility, MedicalFacility>) {
   this.where({ deletedAt: null })
 })
 

@@ -47,7 +47,7 @@ schema.index(
   { unique: true, collation: { locale: 'vi', strength: 2 }, partialFilterExpression: { deletedAt: null } }
 )
 
-schema.pre(/^find/, function (this: Query<Specialty, Specialty>) {
+schema.pre(/^find|count/, function (this: Query<Specialty, Specialty>) {
   this.where({ deletedAt: null })
 })
 

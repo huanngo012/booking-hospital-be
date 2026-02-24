@@ -93,11 +93,10 @@ const MedicalFacilityService = {
         await ImageService.deleteMultiple(removeImageIds)
         facility.images = facility.images.filter((item) => !removeImageUrls.includes(item))
       }
-      console.log('huanha', files?.images)
 
       if (files?.images?.length) {
         const urls = await ImageService.uploadMultiple(files.images, CloudinaryFolder.BOOKINGS_MEDICAL_FACILITY)
-        facility.images.concat(urls)
+        facility.images.push(...urls)
       }
 
       Object.assign(facility, payload)
@@ -109,6 +108,10 @@ const MedicalFacilityService = {
 
   deleteMedicalFacilityService: async (_id: MedicalFacilityParams) => {
     const response = await MedicalFacilityModel.findOneAndUpdate({ _id }, { deletedAt: new Date() }, { new: true })
+    if (response) {
+      const removeImageIds = [...response?.images, response.logo].map((item) => extractPublicIdFromUrl(item))
+      await ImageService.deleteMultiple(removeImageIds)
+    }
     if (!response) {
       throw new NotFoundError('Cơ sở y tế không tồn tại')
     }

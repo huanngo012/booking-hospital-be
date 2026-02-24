@@ -16,7 +16,6 @@ export const errorHandler: ErrorRequestHandler = (
 ) => {
   void _next
   if (error instanceof ZodError) {
-    console.log(error.issues)
     return res.status(400).json({
       success: false,
       message: error.issues[0].message
