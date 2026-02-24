@@ -21,7 +21,8 @@ export const medicalFacilityBodySchema = z.object(
     hostID: objectIdSchema,
     workingTimes: z
       .array(workingTimeSchema, { error: 'Phải chọn ít nhất 1 ngày làm việc' })
-      .min(1, 'Phải có ít nhất 1 ngày làm việc')
+      .min(1, 'Phải có ít nhất 1 ngày làm việc'),
+    removeImageUrls: z.array(z.url('URL không hợp lệ')).optional()
   },
   {
     message: 'Vui lòng nhập dữ liệu'

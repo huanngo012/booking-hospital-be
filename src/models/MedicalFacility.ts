@@ -1,4 +1,5 @@
 import { Query, Schema, Types, model } from 'mongoose'
+import slugify from 'slugify'
 import { MedicalFacility, MedicalFacilityDocument } from '~/types/medical-facility.type'
 import { removeVietnameseTones } from '~/utils/helpers'
 
@@ -81,6 +82,10 @@ const schema = new Schema<MedicalFacility>(
       type: Number,
       default: 0
     },
+    slug: {
+      type: String,
+      trim: true
+    },
     deletedAt: {
       type: Date,
       default: null,
@@ -92,6 +97,7 @@ const schema = new Schema<MedicalFacility>(
 
 schema.index({ deletedAt: 1 })
 schema.index({ hostID: 1 }, { unique: true, partialFilterExpression: { deletedAt: null } })
+schema.index({ slug: 1 }, { unique: true, partialFilterExpression: { deletedAt: null } })
 schema.index(
   { name: 1 },
   { unique: true, collation: { locale: 'vi', strength: 2 }, partialFilterExpression: { deletedAt: null } }
@@ -101,9 +107,26 @@ schema.pre(/^find/, function (this: Query<MedicalFacility, MedicalFacility>) {
   this.where({ deletedAt: null })
 })
 
-schema.pre('save', function (this: MedicalFacilityDocument) {
+schema.pre('save', async function (this: MedicalFacilityDocument) {
   if (this.isModified('name')) {
     this.nameNormalized = removeVietnameseTones(this.name)
+  }
+  if (this.isModified('name') || this.isModified('slug')) {
+    let rawSlug: string
+    if (this.isModified('slug') && this.slug) {
+      rawSlug = this.slug
+    } else {
+      rawSlug = this.name
+    }
+    const baseSlug = slugify(rawSlug, {
+      lower: true,
+      strict: true,
+      locale: 'vi'
+    })
+    const count = await this.model(DOCUMENT_NAME).countDocuments({
+      slug: baseSlug
+    })
+    this.slug = count > 0 ? `${baseSlug}-${count}` : baseSlug
   }
 })
 
