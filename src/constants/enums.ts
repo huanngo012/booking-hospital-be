@@ -115,3 +115,7 @@ export enum InvoiceItemType {
   MEDICINE = 'MEDICINE',
   SERVICE = 'SERVICE'
 }
+
+export enum CloudinaryFolder {
+  BOOKINGS_MEDICAL_FACILITY = 'bookings_medical_facility'
+}

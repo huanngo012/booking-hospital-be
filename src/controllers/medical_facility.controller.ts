@@ -7,7 +7,7 @@ import { MedicalFacility } from '~/types/medical-facility.type'
 
 const MedicalFacilityController = {
   createMedicalFacility: asyncHandler(async (req: BodyRequest<MedicalFacilityBody>, res: Response) => {
-    const response = await MedicalFacilityService.createMedicalFacilityService(req.body)
+    const response = await MedicalFacilityService.createMedicalFacilityService(req.body, req.files)
     new CREATED<MedicalFacility>({ data: response }).send(res)
   })
 }

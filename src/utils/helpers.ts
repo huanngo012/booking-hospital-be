@@ -16,3 +16,17 @@ export const removeVietnameseTones = (text: string = '') =>
     .replace(/đ/g, 'd')
     .replace(/Đ/g, 'D')
     .toLowerCase()
+
+export const extractPublicIdFromUrl = (url: string) => {
+  try {
+    const parts = url.split('/upload/')[1]
+
+    const withoutVersion = parts.replace(/^v\d+\//, '')
+
+    const publicId = withoutVersion.replace(/\.[^/.]+$/, '')
+
+    return publicId
+  } catch (error) {
+    throw new Error('Invalid Cloudinary URL')
+  }
+}

@@ -1,27 +1,29 @@
 import cloudinary from '~/config/cloudinary'
 
 const ImageService = {
-  uploadSingle: async (file: string, folder: string) => {
-    console.log(file)
-    const { secure_url, public_id } = await cloudinary.uploader.upload(file, {
-      folder
-    })
+  uploadSingle: async (file: Express.Multer.File, folder: string) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder,
+          resource_type: 'image'
+        },
+        (error, result) => {
+          if (error) return reject(error)
 
-    return {
-      url: secure_url,
-      public_id
-    }
+          resolve({
+            url: result?.secure_url
+          })
+        }
+      )
+      stream.end(file.buffer)
+    })
   },
 
-  uploadMultiple: async (files: string[], folder: string) => {
-    const uploads = files.map((file) => cloudinary.uploader.upload(file, { folder }))
+  uploadMultiple: async (files: Express.Multer.File[], folder: string) => {
+    const uploads = files.map((file) => ImageService.uploadSingle(file, folder))
 
-    const results = await Promise.all(uploads)
-
-    return results.map((item) => ({
-      url: item.secure_url,
-      public_id: item.public_id
-    }))
+    return Promise.all(uploads)
   },
 
   deleteByPublicId: async (publicId: string) => {
@@ -29,7 +31,7 @@ const ImageService = {
   },
 
   deleteMultiple: async (publicIds: string[]) => {
-    return Promise.all(publicIds.map((id) => cloudinary.uploader.destroy(id)))
+    return cloudinary.api.delete_resources(publicIds)
   }
 }
 

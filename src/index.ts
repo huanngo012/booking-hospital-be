@@ -1,13 +1,12 @@
+import './config/env'
 import express from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import dbConnect from './config/database'
 import routes from './routes'
 import z from 'zod'
 import { vi } from 'zod/locales'
 
-dotenv.config()
 z.config(vi())
 
 const app = express()

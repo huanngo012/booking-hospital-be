@@ -5,6 +5,10 @@ declare global {
   namespace Express {
     interface Request {
       user?: User
+      files?: {
+        [fieldname: string]: Express.Multer.File[]
+      }
+      file?: Express.Multer.File
     }
   }
   type BodyRequest<B> = Request<Record<string, never>, unknown, B>
