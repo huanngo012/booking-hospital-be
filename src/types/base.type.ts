@@ -2,7 +2,7 @@ import { Types } from 'mongoose'
 import { DosageTime, InvoiceItemType, MedicineInstruction, TimeSlotCode } from '~/constants/enums'
 
 export interface BaseDocument {
-  _id: string
+  _id: Types.ObjectId
   deletedAt?: Date | null
   slug?: string
 }

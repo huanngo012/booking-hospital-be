@@ -38,4 +38,13 @@ const validateSpecialties = async (ids: string[]) => {
   if (count !== ids.length) throw new BadRequestError('Có chuyên khoa không tồn tại')
 }
 
-export { validateHost, validateCategory, validateSpecialties }
+const validateMedicalFacility = async (_id: string) => {
+  const medicalFacilityExists = await MedicalFacilityModel.exists({ _id })
+  if (!medicalFacilityExists) throw new BadRequestError('Cơ sở y tế không tồn tại')
+}
+const validateSpecialty = async (_id: string) => {
+  const specialtyExists = await SpecialtyModel.exists({ _id })
+  if (!specialtyExists) throw new BadRequestError('Chuyên khoa không tồn tại')
+}
+
+export { validateHost, validateCategory, validateSpecialties, validateMedicalFacility, validateSpecialty }

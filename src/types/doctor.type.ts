@@ -5,12 +5,12 @@ export interface Doctor extends BaseDocument {
   _id: Types.ObjectId
   gender: string
   specialtyID: Types.ObjectId
-  clinicID: Types.ObjectId
+  medicalFacilityID: Types.ObjectId
   description?: string
   roomID?: string
   position?: string
-  ratings: Rating[]
-  totalRatings: number
+  ratings?: Rating[]
+  totalRatings?: number
 }
 
 export type DoctorDocument = HydratedDocument<Doctor>
