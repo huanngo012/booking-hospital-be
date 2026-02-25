@@ -4,7 +4,7 @@ import { objectIdSchema, querySchema } from './common.schema'
 
 export const doctorBodySchema = z.object(
   {
-    _id: objectIdSchema,
+    userID: objectIdSchema,
     gender: z.enum(Gender, {
       error: 'Vui lòng chọn giới tính'
     }),

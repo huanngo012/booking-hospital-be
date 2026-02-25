@@ -1,31 +1,29 @@
 import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 import { CREATED, DELETED, OK } from '~/core/success.response'
-import { DoctorQuery } from '~/schemas/doctor.schema'
 import DoctorService from '~/services/doctor.service'
-import { Doctor } from '~/types/doctor.type'
 
 const DoctorController = {
-  getDoctors: asyncHandler(async (req: QueryRequest<DoctorQuery>, res: Response) => {
+  getDoctors: asyncHandler(async (req: Request, res: Response) => {
     const response = await DoctorService.getDoctorsService(req.query)
-    new OK<Doctor[]>({ data: response }).send(res)
+    new OK({ data: response }).send(res)
   }),
 
   getDoctor: asyncHandler(async (req: Request, res: Response) => {
     const _id = req.params._id as string
     const response = await DoctorService.getDoctorService(_id)
-    new OK<Doctor>({ data: response }).send(res)
+    new OK({ data: response }).send(res)
   }),
 
   createDoctor: asyncHandler(async (req: Request, res: Response) => {
     const response = await DoctorService.createDoctorService(req.body)
-    new CREATED<Doctor>({ data: response }).send(res)
+    new CREATED({ data: response }).send(res)
   }),
 
   updateDoctor: asyncHandler(async (req: Request, res: Response) => {
     const _id = req.params._id as string
     const response = await DoctorService.updateDoctorService(_id, req.body)
-    new OK<Doctor>({ data: response }).send(res)
+    new OK({ data: response }).send(res)
   }),
 
   deleteDoctor: asyncHandler(async (req: Request, res: Response) => {

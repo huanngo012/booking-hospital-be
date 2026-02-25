@@ -1,24 +1,28 @@
 import { Response } from 'express'
 import { statusCodes } from '~/constants/status-codes'
+import { Pagination } from '~/types/base.type'
 
-class SuccessResponse<T = null> {
+class SuccessResponse<T> {
   status: number
   success: boolean
-  data?: T | null
+  data?: T
+  pagination?: Pagination
 
-  constructor({ status = statusCodes.OK, data }: { status?: number; data?: T }) {
+  constructor({ status = statusCodes.OK, data, pagination }: { status?: number; data?: T; pagination?: Pagination }) {
     this.status = status
     this.success = true
     this.data = data
+    this.pagination = pagination
   }
   send = (res: Response) => {
     return res.status(this.status).json(this)
   }
 }
 class OK<T> extends SuccessResponse<T> {
-  constructor({ data }: { data: T }) {
+  constructor({ data, pagination }: { data: T; pagination?: Pagination }) {
     super({
-      data
+      data,
+      pagination
     })
   }
 }

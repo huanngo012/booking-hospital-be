@@ -1,9 +1,9 @@
 import { BadRequestError } from '~/core/error.response'
 import { DoctorModel } from '~/models/Doctor'
 
-export const validateDoctorProfileExists = async (doctorID: string) => {
+export const validateDoctorProfileExists = async (userID: string) => {
   const doctor = await DoctorModel.exists({
-    _id: doctorID
+    userID
   })
 
   if (doctor) {

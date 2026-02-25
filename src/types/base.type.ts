@@ -6,6 +6,25 @@ export interface BaseDocument {
   deletedAt?: Date | null
   slug?: string
 }
+export interface QueryParams {
+  sort?: string
+  fields?: string
+  page?: number
+  limit?: number
+}
+
+export interface Pagination {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+export interface AggregateResult<T> {
+  data: T[]
+  pagination: Pagination
+}
+
 export interface FacilityWorkingTime {
   dayOfWeek: number
   startTime: TimeSlotCode

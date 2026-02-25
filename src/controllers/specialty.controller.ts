@@ -1,33 +1,34 @@
 import asyncHandler from 'express-async-handler'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { CREATED, DELETED, OK } from '~/core/success.response'
 import SpecialtyService from '~/services/specialty.service'
-import { SpecialtyBody, SpecialtyParams, SpecialtyQuery } from '~/schemas/specialty.schema'
-import { Specialty } from '~/types/specialty.type'
 
 const SpecialtyController = {
-  getSpecialties: asyncHandler(async (req: QueryRequest<SpecialtyQuery>, res: Response) => {
-    const response = await SpecialtyService.getSpecialiesService(req.query)
-    new OK<Specialty[]>({ data: response }).send(res)
+  getSpecialties: asyncHandler(async (req: Request, res: Response) => {
+    const { data, pagination } = await SpecialtyService.getSpecialiesService(req.query)
+    new OK({ data, pagination }).send(res)
   }),
 
-  getSpecialty: asyncHandler(async (req: ParamsRequest<SpecialtyParams>, res: Response) => {
-    const response = await SpecialtyService.getSpecialtyService(req.params)
-    new OK<Specialty>({ data: response }).send(res)
+  getSpecialtyBySlug: asyncHandler(async (req: Request, res: Response) => {
+    const slug = req.params.slug as string
+    const response = await SpecialtyService.getSpecialtyBySlugService(slug)
+    new OK({ data: response }).send(res)
   }),
 
-  createSpecialty: asyncHandler(async (req: BodyRequest<SpecialtyBody>, res: Response) => {
+  createSpecialty: asyncHandler(async (req: Request, res: Response) => {
     const response = await SpecialtyService.createSpecialtyService(req.body)
-    new CREATED<Specialty>({ data: response }).send(res)
+    new CREATED({ data: response }).send(res)
   }),
 
-  updateSpecialty: asyncHandler(async (req: ParamsBodyRequest<SpecialtyParams, SpecialtyBody>, res: Response) => {
-    const response = await SpecialtyService.updateSpecialtyService(req.params, req.body)
-    new OK<Specialty>({ data: response }).send(res)
+  updateSpecialty: asyncHandler(async (req: Request, res: Response) => {
+    const _id = req.params._id as string
+    const response = await SpecialtyService.updateSpecialtyService(_id, req.body)
+    new OK({ data: response }).send(res)
   }),
 
-  deleteSpecialty: asyncHandler(async (req: ParamsRequest<SpecialtyParams>, res: Response) => {
-    await SpecialtyService.deleteSpecialtyService(req.params)
+  deleteSpecialty: asyncHandler(async (req: Request, res: Response) => {
+    const _id = req.params._id as string
+    await SpecialtyService.deleteSpecialtyService(_id)
     new DELETED().send(res)
   })
 }

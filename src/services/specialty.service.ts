@@ -1,67 +1,55 @@
 import { NotFoundError } from '~/core/error.response'
 import { SpecialtyModel } from '~/models/Specialty'
-import { SpecialtyBody, SpecialtyParams, SpecialtyQuery } from '~/schemas/specialty.schema'
-import { handleMongoDuplicateError, removeVietnameseTones } from '~/utils/helpers'
+import { Specialty, SpecialtyQueryParams } from '~/types/specialty.type'
+import { buildAggregateQuery, formatAggregateResult } from '~/utils/buildAggregateQuery'
+import { removeVietnameseTones } from '~/utils/helpers'
 
 const SpecialtyService = {
-  getSpecialiesService: async (queries: SpecialtyQuery) => {
+  getSpecialiesService: async (queries: SpecialtyQueryParams) => {
     const { limit, sort, page, fields, name, ...filter } = queries
-    let filterQuery: Record<string, unknown> = { ...filter }
-    if (name) {
-      filterQuery = {
-        ...filterQuery,
-        nameNormalized: {
-          $regex: `${removeVietnameseTones(name)}`
-        }
-      }
-    }
-    let queryCommand = SpecialtyModel.find(filterQuery)
-    if (sort) {
-      queryCommand = queryCommand.sort(sort.split(',').join(' '))
-    }
-    if (fields) {
-      queryCommand = queryCommand.select(fields.split(',').join(' '))
-    }
-    const pageNumber = Math.max(1, Number(page) || 1)
-    const limitNumber = Math.max(1, Number(limit) || Number(process.env.LIMIT) || 10)
-    const skip = (pageNumber - 1) * limitNumber
-    queryCommand = queryCommand.skip(skip).limit(limitNumber)
-    const response = await queryCommand.exec()
-    return response
+
+    const pipeline = buildAggregateQuery({
+      filter: {
+        deletedAt: null,
+        ...filter
+      },
+      search: {
+        ...(name && { nameNormalized: removeVietnameseTones(name) })
+      },
+      sort,
+      fields,
+      page,
+      limit
+    })
+
+    const response = await SpecialtyModel.aggregate(pipeline)
+    return formatAggregateResult<Specialty>(response, page, limit)
   },
 
-  getSpecialtyService: async (_id: SpecialtyParams) => {
-    const response = await SpecialtyModel.findById(_id)
+  getSpecialtyBySlugService: async (slug: string) => {
+    const response = await SpecialtyModel.findOne({ slug })
     if (!response) {
       throw new NotFoundError('Chuyên khoa không tồn tại')
     }
     return response
   },
 
-  createSpecialtyService: async (payload: SpecialtyBody) => {
-    try {
-      const response = await SpecialtyModel.create(payload)
-      return response
-    } catch (error: unknown) {
-      return handleMongoDuplicateError(error, 'Chuyên khoa đã tồn tại')
-    }
+  createSpecialtyService: async (payload: Specialty) => {
+    const response = await SpecialtyModel.create(payload)
+    return response
   },
 
-  updateSpecialtyService: async (_id: SpecialtyParams, payload: SpecialtyBody) => {
-    try {
-      const response = await SpecialtyModel.findById(_id)
-      if (!response) {
-        throw new NotFoundError('Chuyên khoa không tồn tại')
-      }
-      Object.assign(response, payload)
-      await response.save()
-      return response
-    } catch (error: unknown) {
-      return handleMongoDuplicateError(error, 'Chuyên khoa đã tồn tại')
+  updateSpecialtyService: async (_id: string, payload: Specialty) => {
+    const response = await SpecialtyModel.findById(_id)
+    if (!response) {
+      throw new NotFoundError('Chuyên khoa không tồn tại')
     }
+    Object.assign(response, payload)
+    await response.save()
+    return response
   },
 
-  deleteSpecialtyService: async (_id: SpecialtyParams) => {
+  deleteSpecialtyService: async (_id: string) => {
     const response = await SpecialtyModel.findOneAndUpdate({ _id }, { deletedAt: new Date() }, { new: true })
     if (!response) {
       throw new NotFoundError('Chuyên khoa không tồn tại')

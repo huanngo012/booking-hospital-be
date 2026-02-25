@@ -1,10 +1,10 @@
 import { NotFoundError } from '~/core/error.response'
 import { UserModel } from '~/models/User'
-import { UserBody, UserParams, UserQuery } from '~/schemas/user.schema'
-import { handleMongoDuplicateError, removeVietnameseTones } from '~/utils/helpers'
+import { User, UserQueryParams } from '~/types/user.type'
+import { removeVietnameseTones } from '~/utils/helpers'
 
 const UserService = {
-  getUsersService: async (queries: UserQuery) => {
+  getUsersService: async (queries: UserQueryParams) => {
     const { limit, sort, page, fields, name, email, ...filter } = queries
     let filterQuery: Record<string, unknown> = { ...filter }
     if (name) {
@@ -38,7 +38,7 @@ const UserService = {
     return response
   },
 
-  getUserService: async (_id: UserParams) => {
+  getUserService: async (_id: string) => {
     const response = await UserModel.findById(_id)
     if (!response) {
       throw new NotFoundError('Người dùng không tồn tại')
@@ -46,28 +46,20 @@ const UserService = {
     return response
   },
 
-  createUserService: async (payload: UserBody) => {
-    try {
-      const response = await UserModel.create(payload)
-      return response
-    } catch (error: unknown) {
-      return handleMongoDuplicateError(error, 'Người dùng đã tồn tại')
-    }
+  createUserService: async (payload: User) => {
+    const response = await UserModel.create(payload)
+    return response
   },
 
-  updateUserService: async (_id: UserParams, payload: UserBody) => {
-    try {
-      const response = await UserModel.findOneAndUpdate({ _id }, payload, { new: true })
-      if (!response) {
-        throw new NotFoundError('Người dùng không tồn tại')
-      }
-      return response
-    } catch (error: unknown) {
-      return handleMongoDuplicateError(error, 'Người dùng đã tồn tại')
+  updateUserService: async (_id: string, payload: User) => {
+    const response = await UserModel.findOneAndUpdate({ _id }, payload, { new: true })
+    if (!response) {
+      throw new NotFoundError('Người dùng không tồn tại')
     }
+    return response
   },
 
-  deleteUserService: async (_id: UserParams) => {
+  deleteUserService: async (_id: string) => {
     const response = await UserModel.findOneAndUpdate({ _id }, { deletedAt: new Date() }, { new: true })
     if (!response) {
       throw new NotFoundError('Người dùng không tồn tại')

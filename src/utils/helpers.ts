@@ -1,12 +1,7 @@
-import createError from 'http-errors'
 import { MongoServerError } from 'mongodb'
-
-export const handleMongoDuplicateError = (error: unknown, message = 'Dữ liệu đã tồn tại'): never => {
-  if (error instanceof MongoServerError && error.code === 11000) {
-    throw createError(409, message)
-  }
-  throw error
-}
+import { ZodError } from 'zod'
+import { statusCodes } from '~/constants/status-codes'
+import { ErrorResponse } from '~/core/error.response'
 
 export const removeVietnameseTones = (text: string = '') =>
   text
@@ -28,5 +23,47 @@ export const extractPublicIdFromUrl = (url: string) => {
     return publicId
   } catch (error) {
     throw new Error('Invalid Cloudinary URL')
+  }
+}
+
+export const mapError = (error: unknown) => {
+  if (error instanceof ZodError) {
+    return {
+      status: statusCodes.BAD_REQUEST,
+      message: error.issues[0]?.message
+    }
+  }
+
+  if (error instanceof ErrorResponse) {
+    return {
+      status: error.status,
+      message: error.message
+    }
+  }
+
+  if (error instanceof MongoServerError) {
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0]
+      return {
+        status: statusCodes.CONFLICT,
+        message: `${field} đã tồn tại`
+      }
+    }
+    return {
+      status: statusCodes.CONFLICT,
+      message: error.message
+    }
+  }
+
+  if (error instanceof Error) {
+    return {
+      status: statusCodes.INTERNAL_SERVER_ERROR,
+      message: error.message
+    }
+  }
+
+  return {
+    status: statusCodes.INTERNAL_SERVER_ERROR,
+    message: 'Internal Server Error'
   }
 }

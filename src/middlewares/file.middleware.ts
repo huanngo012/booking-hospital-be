@@ -1,5 +1,5 @@
 import multer from 'multer'
-import createError from 'http-errors'
+import { BadRequestError } from '~/core/error.response'
 
 const storage = multer.memoryStorage()
 
@@ -12,7 +12,7 @@ export const upload = multer({
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
 
     if (!allowedTypes.includes(file.mimetype)) {
-      return cb(createError(400, 'Invalid file type'))
+      return cb(new BadRequestError('Invalid file type'))
     }
 
     cb(null, true)

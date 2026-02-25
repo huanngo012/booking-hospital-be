@@ -7,7 +7,7 @@ export const COLLECTION_NAME = 'doctors'
 
 const schema = new Schema<Doctor>(
   {
-    _id: {
+    userID: {
       type: Types.ObjectId,
       ref: 'User'
     },

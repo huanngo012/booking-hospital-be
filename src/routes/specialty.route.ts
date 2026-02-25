@@ -9,7 +9,7 @@ import { RoleCode } from '~/constants/enums'
 const router = express.Router()
 
 router.get('/', validateRequestQuery(specialtyQuerySchema), SpecialtyController.getSpecialties)
-router.get('/:_id', validateRequestParams(paramsSchema), SpecialtyController.getSpecialty)
+router.get('/:slug', SpecialtyController.getSpecialtyBySlug)
 router.post(
   '/',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],

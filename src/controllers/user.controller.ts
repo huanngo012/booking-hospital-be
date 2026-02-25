@@ -1,33 +1,34 @@
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 import { CREATED, DELETED, OK } from '~/core/success.response'
-import { UserBody, UserParams, UserQuery } from '~/schemas/user.schema'
 import UserService from '~/services/user.service'
-import { User } from '~/types/user.type'
 
 const UserController = {
-  getUsers: asyncHandler(async (req: QueryRequest<UserQuery>, res: Response) => {
+  getUsers: asyncHandler(async (req: Request, res: Response) => {
     const response = await UserService.getUsersService(req.query)
-    new OK<User[]>({ data: response }).send(res)
+    new OK({ data: response }).send(res)
   }),
 
-  getUser: asyncHandler(async (req: ParamsRequest<UserParams>, res: Response) => {
-    const response = await UserService.getUserService(req.params)
-    new OK<User>({ data: response }).send(res)
+  getUser: asyncHandler(async (req: Request, res: Response) => {
+    const _id = req.params._id as string
+    const response = await UserService.getUserService(_id)
+    new OK({ data: response }).send(res)
   }),
 
-  createUser: asyncHandler(async (req: BodyRequest<UserBody>, res: Response) => {
+  createUser: asyncHandler(async (req: Request, res: Response) => {
     const response = await UserService.createUserService(req.body)
-    new CREATED<User>({ data: response }).send(res)
+    new CREATED({ data: response }).send(res)
   }),
 
-  updateUser: asyncHandler(async (req: ParamsBodyRequest<UserParams, UserBody>, res: Response) => {
-    const response = await UserService.updateUserService(req.params, req.body)
-    new OK<User>({ data: response }).send(res)
+  updateUser: asyncHandler(async (req: Request, res: Response) => {
+    const _id = req.params._id as string
+    const response = await UserService.updateUserService(_id, req.body)
+    new OK({ data: response }).send(res)
   }),
 
-  deleteUser: asyncHandler(async (req: ParamsRequest<UserParams>, res: Response) => {
-    await UserService.deleteUserService(req.params)
+  deleteUser: asyncHandler(async (req: Request, res: Response) => {
+    const _id = req.params._id as string
+    await UserService.deleteUserService(_id)
     new DELETED().send(res)
   })
 }

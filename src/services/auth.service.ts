@@ -2,17 +2,12 @@ import jwt from 'jsonwebtoken'
 import { BadRequestError, NotFoundError } from '~/core/error.response'
 import { UserModel } from '~/models/User'
 import { LoginBody, ProfileBody, RegisterBody } from '~/schemas/auth.schema'
-import { handleMongoDuplicateError } from '~/utils/helpers'
 import { generateAccessToken, generateRefreshToken } from '~/utils/jwt'
 
 const AuthService = {
   register: async (payload: RegisterBody) => {
-    try {
-      const response = await UserModel.create(payload)
-      return response
-    } catch (error: unknown) {
-      return handleMongoDuplicateError(error, 'Email đã đăng ký')
-    }
+    const response = await UserModel.create(payload)
+    return response
   },
 
   login: async (payload: LoginBody) => {

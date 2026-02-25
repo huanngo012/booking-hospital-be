@@ -1,9 +1,12 @@
 import { HydratedDocument } from 'mongoose'
-import { BaseDocument } from './base.type'
+import { BaseDocument, QueryParams } from './base.type'
 
 export interface Category extends BaseDocument {
   tag: string
   tagNormalized: string
+}
+export interface CategoryQueryParams extends QueryParams {
+  tag?: string
 }
 
 export type CategoryDocument = HydratedDocument<Category>

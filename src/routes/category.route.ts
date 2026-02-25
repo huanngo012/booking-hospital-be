@@ -1,15 +1,15 @@
 import express from 'express'
-import { validateRequestBody, validateRequestParams, validateRequestQuery } from '~/middlewares/validation.middleware'
+import { validateRequestBody, validateRequestParams } from '~/middlewares/validation.middleware'
 import CategoryController from '~/controllers/category.controller'
-import { categoryBodySchema, categoryQuerySchema } from '~/schemas/category.schema'
+import { categoryBodySchema } from '~/schemas/category.schema'
 import { paramsSchema } from '~/schemas/common.schema'
 import authorizeRoles, { verifyAccessToken } from '~/middlewares/auth.middleware'
 import { RoleCode } from '~/constants/enums'
 
 const router = express.Router()
 
-router.get('/', validateRequestQuery(categoryQuerySchema), CategoryController.getCategories)
-router.get('/:_id', validateRequestParams(paramsSchema), CategoryController.getCategory)
+router.get('/', CategoryController.getCategories)
+router.get('/:slug', CategoryController.getCategoryBySlug)
 router.post(
   '/',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],

@@ -1,67 +1,55 @@
 import { CategoryModel } from '~/models/Category'
-import { handleMongoDuplicateError, removeVietnameseTones } from '~/utils/helpers'
-import { CategoryBody, CategoryParams, CategoryQuery } from '~/schemas/category.schema'
+import { removeVietnameseTones } from '~/utils/helpers'
 import { NotFoundError } from '~/core/error.response'
+import { buildAggregateQuery, formatAggregateResult } from '~/utils/buildAggregateQuery'
+import { Category, CategoryQueryParams } from '~/types/category.type'
 
 const CategoryService = {
-  getCategoriesService: async (queries: CategoryQuery) => {
+  getCategoriesService: async (queries: CategoryQueryParams) => {
     const { limit, sort, page, fields, tag, ...filter } = queries
-    let filterQuery: Record<string, unknown> = { ...filter }
-    if (tag) {
-      filterQuery = {
-        ...filterQuery,
-        tagNormalized: {
-          $regex: `${removeVietnameseTones(tag)}`
-        }
-      }
-    }
-    let queryCommand = CategoryModel.find(filterQuery)
-    if (sort) {
-      queryCommand = queryCommand.sort(sort.split(',').join(' '))
-    }
-    if (fields) {
-      queryCommand = queryCommand.select(fields.split(',').join(' '))
-    }
-    const pageNumber = Math.max(1, Number(page) || 1)
-    const limitNumber = Math.max(1, Number(limit) || Number(process.env.LIMIT) || 10)
-    const skip = (pageNumber - 1) * limitNumber
-    queryCommand = queryCommand.skip(skip).limit(limitNumber)
-    const response = await queryCommand.exec()
-    return response
+
+    const pipeline = buildAggregateQuery({
+      filter: {
+        deletedAt: null,
+        ...filter
+      },
+      search: {
+        ...(tag && { tagNormalized: removeVietnameseTones(tag) })
+      },
+      sort,
+      fields,
+      page,
+      limit
+    })
+
+    const response = await CategoryModel.aggregate(pipeline)
+    return formatAggregateResult<Category>(response, page, limit)
   },
 
-  getCategoryService: async (_id: CategoryParams) => {
-    const response = await CategoryModel.findById(_id)
+  getCategoryBySlugService: async (slug: string) => {
+    const response = await CategoryModel.findOne({ slug })
     if (!response) {
       throw new NotFoundError('Danh mục không tồn tại')
     }
     return response
   },
 
-  createCategoryService: async (payload: CategoryBody) => {
-    try {
-      const response = await CategoryModel.create(payload)
-      return response
-    } catch (error: unknown) {
-      return handleMongoDuplicateError(error, 'Danh mục đã tồn tại')
-    }
+  createCategoryService: async (payload: Category) => {
+    const response = await CategoryModel.create(payload)
+    return response
   },
 
-  updateCategoryService: async (_id: CategoryParams, payload: CategoryBody) => {
-    try {
-      const response = await CategoryModel.findById(_id)
-      if (!response) {
-        throw new NotFoundError('Danh mục không tồn tại')
-      }
-      Object.assign(response, payload)
-      await response.save()
-      return response
-    } catch (error: unknown) {
-      return handleMongoDuplicateError(error, 'Danh mục đã tồn tại')
+  updateCategoryService: async (_id: string, payload: Category) => {
+    const response = await CategoryModel.findById(_id)
+    if (!response) {
+      throw new NotFoundError('Danh mục không tồn tại')
     }
+    Object.assign(response, payload)
+    await response.save()
+    return response
   },
 
-  deleteCategoryService: async (_id: CategoryParams) => {
+  deleteCategoryService: async (_id: string) => {
     const response = await CategoryModel.findOneAndUpdate({ _id }, { deletedAt: new Date() }, { new: true })
     if (!response) {
       throw new NotFoundError('Danh mục không tồn tại')

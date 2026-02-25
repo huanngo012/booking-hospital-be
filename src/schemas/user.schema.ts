@@ -1,5 +1,4 @@
 import z from 'zod'
-import { paramsSchema, querySchema } from './common.schema'
 import { RoleCode } from '~/constants/enums'
 
 const userEmailSchema = z.email({ message: 'Vui lòng nhập đúng định dạng email' }).trim()
@@ -28,11 +27,3 @@ export const userBodySchema = z.object(
     message: 'Vui lòng nhập dữ liệu'
   }
 )
-export const userQuerySchema = querySchema.extend({
-  name: z.string().optional(),
-  email: z.string().optional()
-})
-
-export type UserParams = z.infer<typeof paramsSchema>
-export type UserBody = z.infer<typeof userBodySchema>
-export type UserQuery = z.infer<typeof userQuerySchema>

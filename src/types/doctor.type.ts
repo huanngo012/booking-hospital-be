@@ -2,7 +2,7 @@ import { HydratedDocument, Types } from 'mongoose'
 import { BaseDocument, Rating } from './base.type'
 
 export interface Doctor extends BaseDocument {
-  _id: Types.ObjectId
+  userID: Types.ObjectId
   gender: string
   specialtyID: Types.ObjectId
   medicalFacilityID: Types.ObjectId

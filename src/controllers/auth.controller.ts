@@ -1,17 +1,15 @@
 import asyncHandler from 'express-async-handler'
 import { Request, Response } from 'express'
-import { LoginBody, ProfileBody, RegisterBody } from '~/schemas/auth.schema'
 import AuthService from '~/services/auth.service'
-import { User } from '~/types/user.type'
 import { DELETED, OK } from '~/core/success.response'
 
 const AuthController = {
-  register: asyncHandler(async (req: BodyRequest<RegisterBody>, res: Response) => {
+  register: asyncHandler(async (req: Request, res: Response) => {
     const response = await AuthService.register(req.body)
-    new OK<User>({ data: response }).send(res)
+    new OK({ data: response }).send(res)
   }),
 
-  login: asyncHandler(async (req: BodyRequest<LoginBody>, res: Response) => {
+  login: asyncHandler(async (req: Request, res: Response) => {
     const { accessToken, refreshToken, user } = await AuthService.login(req.body)
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -20,7 +18,7 @@ const AuthController = {
       sameSite: 'none'
     })
     res.setHeader('Authorization', `Bearer ${accessToken}`)
-    new OK<User>({ data: user }).send(res)
+    new OK({ data: user }).send(res)
   }),
 
   logout: asyncHandler(async (req: Request, res: Response) => {
@@ -49,15 +47,15 @@ const AuthController = {
   }),
 
   getCurrentUser: asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user?._id as string
+    const userId = req.user?._id.toString() as string
     const response = await AuthService.getCurrentUser(userId)
-    new OK<User>({ data: response }).send(res)
+    new OK({ data: response }).send(res)
   }),
 
-  updateCurrentUser: asyncHandler(async (req: BodyRequest<ProfileBody>, res: Response) => {
-    const userId = req.user?._id as string
+  updateCurrentUser: asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?._id.toString() as string
     const response = await AuthService.updateCurrentUser(userId, req.body)
-    new OK<User>({ data: response }).send(res)
+    new OK({ data: response }).send(res)
   })
 }
 

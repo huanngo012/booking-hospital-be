@@ -1,5 +1,5 @@
 import { HydratedDocument } from 'mongoose'
-import { BaseDocument } from './base.type'
+import { BaseDocument, QueryParams } from './base.type'
 
 export interface User extends BaseDocument {
   name: string
@@ -20,4 +20,10 @@ export interface User extends BaseDocument {
 export interface UserMethods {
   isCorrectPassword(password: string): Promise<boolean>
 }
+
+export interface UserQueryParams extends QueryParams {
+  name?: string
+  email?: string
+}
+
 export type UserDocument = HydratedDocument<User>
