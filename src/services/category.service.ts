@@ -2,7 +2,7 @@ import { CategoryModel } from '~/models/Category'
 import { removeVietnameseTones } from '~/utils/helpers'
 import { NotFoundError } from '~/core/error.response'
 import { buildAggregateQuery, formatAggregateResult } from '~/utils/buildAggregateQuery'
-import { Category, CategoryQueryParams } from '~/types/category.type'
+import { Category, CategoryBody, CategoryQueryParams } from '~/types/category.type'
 
 const CategoryService = {
   getCategoriesService: async (queries: CategoryQueryParams) => {
@@ -34,12 +34,12 @@ const CategoryService = {
     return response
   },
 
-  createCategoryService: async (payload: Category) => {
+  createCategoryService: async (payload: CategoryBody) => {
     const response = await CategoryModel.create(payload)
     return response
   },
 
-  updateCategoryService: async (_id: string, payload: Category) => {
+  updateCategoryService: async (_id: string, payload: Partial<CategoryBody>) => {
     const response = await CategoryModel.findById(_id)
     if (!response) {
       throw new NotFoundError('Danh mục không tồn tại')

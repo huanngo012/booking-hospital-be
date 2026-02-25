@@ -3,14 +3,16 @@ import { RoleCode } from '~/constants/enums'
 import MedicalFacilityController from '~/controllers/medical_facility.controller'
 import authorizeRoles, { verifyAccessToken } from '~/middlewares/auth.middleware'
 import { upload } from '~/middlewares/file.middleware'
-import { validateRequestBody, validateRequestParams, validateRequestQuery } from '~/middlewares/validation.middleware'
+import { validateRequestBody, validateRequestParams } from '~/middlewares/validation.middleware'
 import { paramsSchema } from '~/schemas/common.schema'
-import { medicalFacilityBodySchema, medicalFacilityQuerySchema } from '~/schemas/medical_facility.schema'
+import { medicalFacilityBodySchema } from '~/schemas/medical_facility.schema'
 
 const router = express.Router()
 
-router.get('/', validateRequestQuery(medicalFacilityQuerySchema), MedicalFacilityController.getMedicalFacilities)
-router.get('/:_id', validateRequestParams(paramsSchema), MedicalFacilityController.getMedicalFacility)
+router.get('/', MedicalFacilityController.getMedicalFacilities)
+
+router.get('/:slug', MedicalFacilityController.getMedicalFacilityBySlug)
+
 router.post(
   '/',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],
@@ -33,6 +35,7 @@ router.put(
   validateRequestBody(medicalFacilityBodySchema.partial()),
   MedicalFacilityController.updateMedicalFacility
 )
+
 router.delete(
   '/:_id',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],

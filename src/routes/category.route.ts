@@ -9,13 +9,16 @@ import { RoleCode } from '~/constants/enums'
 const router = express.Router()
 
 router.get('/', CategoryController.getCategories)
+
 router.get('/:slug', CategoryController.getCategoryBySlug)
+
 router.post(
   '/',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],
   validateRequestBody(categoryBodySchema),
   CategoryController.createCategory
 )
+
 router.put(
   '/:_id',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],
@@ -23,6 +26,7 @@ router.put(
   validateRequestBody(categoryBodySchema.partial()),
   CategoryController.updateCategory
 )
+
 router.delete(
   '/:_id',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],

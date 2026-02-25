@@ -5,8 +5,8 @@ import UserService from '~/services/user.service'
 
 const UserController = {
   getUsers: asyncHandler(async (req: Request, res: Response) => {
-    const response = await UserService.getUsersService(req.query)
-    new OK({ data: response }).send(res)
+    const { data, pagination } = await UserService.getUsersService(req.query)
+    new OK({ data, pagination }).send(res)
   }),
 
   getUser: asyncHandler(async (req: Request, res: Response) => {

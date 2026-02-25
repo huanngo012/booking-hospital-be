@@ -2,13 +2,13 @@ import { RoleCode } from '~/constants/enums'
 import { BadRequestError } from '~/core/error.response'
 import { UserModel } from '~/models/User'
 
-const validateDoctor = async (doctorID: string) => {
+const validateUserRole = async (doctorID: string, role: RoleCode) => {
   const userExists = await UserModel.exists({
     _id: doctorID,
-    role: RoleCode.DOCTOR
+    role
   })
 
-  if (!userExists) throw new BadRequestError('Người dùng không phải bác sĩ')
+  if (!userExists) throw new BadRequestError('Người dùng không có quyền này')
 }
 
-export { validateDoctor }
+export { validateUserRole }

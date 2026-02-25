@@ -9,18 +9,21 @@ import { RoleCode } from '~/constants/enums'
 const router = express.Router()
 
 router.get('/', [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)], UserController.getUsers)
+
 router.get(
   '/:_id',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],
   validateRequestParams(paramsSchema),
   UserController.getUser
 )
+
 router.post(
   '/',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],
   validateRequestBody(userBodySchema),
   UserController.createUser
 )
+
 router.put(
   '/:_id',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],
@@ -28,6 +31,7 @@ router.put(
   validateRequestBody(userBodySchema.partial()),
   UserController.updateUser
 )
+
 router.delete(
   '/:_id',
   [verifyAccessToken, authorizeRoles(RoleCode.ADMIN)],

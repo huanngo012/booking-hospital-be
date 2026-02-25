@@ -1,41 +1,44 @@
 import { MedicalFacilityModel } from '~/models/MedicalFacility'
-import { MedicalFacilityBody, MedicalFacilityParams, MedicalFacilityQuery } from '~/schemas/medical_facility.schema'
 import { extractPublicIdFromUrl, removeVietnameseTones } from '~/utils/helpers'
 import ImageService from './image.service'
-import { CloudinaryFolder } from '~/constants/enums'
+import { CloudinaryFolder, RoleCode } from '~/constants/enums'
 import { NotFoundError } from '~/core/error.response'
-import { validateCategory, validateHost, validateSpecialties } from '~/validations/medical_facility.validation'
-import { MedicalFacilityFiles } from '~/types/medical-facility.type'
+import {
+  MedicalFacility,
+  MedicalFacilityBody,
+  MedicalFacilityFiles,
+  MedicalFacilityQueryParams
+} from '~/types/medical-facility.type'
+import { buildAggregateQuery, formatAggregateResult } from '~/utils/buildAggregateQuery'
+import { validateUserRole } from '~/validations/user.validation'
+import { validateCategory } from '~/validations/category.validation'
+import { validateSpecialties } from '~/validations/specialty.validation'
+import { validateHostFacilityOwnership } from '~/validations/medical_facility.validation'
 
 const MedicalFacilityService = {
-  getMedicalFacilitiesService: async (queries: MedicalFacilityQuery) => {
+  getMedicalFacilitiesService: async (queries: MedicalFacilityQueryParams) => {
     const { limit, sort, page, fields, name, ...filter } = queries
-    let filterQuery: Record<string, unknown> = { ...filter }
-    if (name) {
-      filterQuery = {
-        ...filterQuery,
-        nameNormalized: {
-          $regex: `${removeVietnameseTones(name)}`
-        }
-      }
-    }
-    let queryCommand = MedicalFacilityModel.find(filterQuery)
-    if (sort) {
-      queryCommand = queryCommand.sort(sort.split(',').join(' '))
-    }
-    if (fields) {
-      queryCommand = queryCommand.select(fields.split(',').join(' '))
-    }
-    const pageNumber = Math.max(1, Number(page) || 1)
-    const limitNumber = Math.max(1, Number(limit) || Number(process.env.LIMIT) || 10)
-    const skip = (pageNumber - 1) * limitNumber
-    queryCommand = queryCommand.skip(skip).limit(limitNumber)
-    const response = await queryCommand.exec()
-    return response
+
+    const pipeline = buildAggregateQuery({
+      filter: {
+        deletedAt: null,
+        ...filter
+      },
+      search: {
+        ...(name && { nameNormalized: removeVietnameseTones(name) })
+      },
+      sort,
+      fields,
+      page,
+      limit
+    })
+
+    const response = await MedicalFacilityModel.aggregate(pipeline)
+    return formatAggregateResult<MedicalFacility>(response, page, limit)
   },
 
-  getMedicalFacilityService: async (_id: MedicalFacilityParams) => {
-    const response = await MedicalFacilityModel.findById(_id)
+  getMedicalFacilityBySlugService: async (slug: string) => {
+    const response = await MedicalFacilityModel.findOne({ slug })
     if (!response) {
       throw new NotFoundError('Cơ sở y tế không tồn tại')
     }
@@ -45,7 +48,8 @@ const MedicalFacilityService = {
   createMedicalFacilityService: async (payload: MedicalFacilityBody, files?: MedicalFacilityFiles) => {
     const { hostID, categoryID, specialtyID } = payload
 
-    await validateHost(hostID)
+    await validateUserRole(hostID, RoleCode.HOST)
+    await validateHostFacilityOwnership(hostID)
     await validateCategory(categoryID)
     await validateSpecialties(specialtyID)
 
@@ -63,8 +67,8 @@ const MedicalFacilityService = {
   },
 
   updateMedicalFacilityService: async (
-    _id: MedicalFacilityParams,
-    payload: MedicalFacilityBody,
+    _id: string,
+    payload: Partial<MedicalFacilityBody>,
     files?: MedicalFacilityFiles
   ) => {
     const { hostID, categoryID, specialtyID, removeImageUrls } = payload || {}
@@ -72,7 +76,7 @@ const MedicalFacilityService = {
     const facility = await MedicalFacilityModel.findById(_id)
     if (!facility) throw new NotFoundError('Cơ sở y tế không tồn tại')
 
-    if (hostID && hostID !== facility.hostID.toString()) await validateHost(hostID, _id._id)
+    if (hostID && hostID !== facility.hostID.toString()) await validateHostFacilityOwnership(hostID, _id)
 
     if (categoryID) await validateCategory(categoryID)
 
@@ -98,7 +102,7 @@ const MedicalFacilityService = {
     return await facility.save()
   },
 
-  deleteMedicalFacilityService: async (_id: MedicalFacilityParams) => {
+  deleteMedicalFacilityService: async (_id: string) => {
     const response = await MedicalFacilityModel.findOneAndUpdate({ _id }, { deletedAt: new Date() }, { new: true })
     if (response) {
       const removeImageIds = [...(response.images ?? []), response.logo].map((item) => extractPublicIdFromUrl(item))

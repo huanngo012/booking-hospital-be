@@ -34,9 +34,7 @@ export const profileBodySchema = z.object({
   name: userNameSchema.optional(),
   email: userEmailSchema.optional(),
   password: userPasswordSchema.optional(),
-  newPassword: userPasswordSchema.optional(),
-  avatar: z.string().optional(),
-  address: z.string().optional()
+  newPassword: userPasswordSchema.optional()
 })
 
 export type RegisterBody = z.infer<typeof registerBodySchema>

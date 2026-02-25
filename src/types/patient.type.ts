@@ -1,13 +1,24 @@
 import { HydratedDocument, Types } from 'mongoose'
-import { BaseDocument } from './base.type'
+import { BaseDocument, QueryParams } from './base.type'
+import { Gender } from '~/constants/enums'
 
 export interface Patient extends BaseDocument {
-  fullName: string
+  name: string
   phone: string
-  gender: string
+  gender: Gender
   dob: Date
   bookedBy: Types.ObjectId
-  clinicArr: Types.ObjectId[]
+}
+
+export interface PatientQueryParams extends QueryParams {
+  name?: string
+}
+
+export interface PatientBody {
+  name: string
+  phone: string
+  gender: Gender
+  dob: Date
 }
 
 export type PatientDocument = HydratedDocument<Patient>

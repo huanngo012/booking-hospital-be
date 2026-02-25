@@ -3,11 +3,6 @@ import { TimeSlotCode } from '~/constants/enums'
 
 export const requiredString = (message: string) => z.string(message).trim().min(1, message)
 
-export const paginationSchema = z.object({
-  page: z.coerce.number().int().min(1).optional(),
-  limit: z.coerce.number().int().min(1).max(100).optional()
-})
-
 export const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'ID không hợp lệ')
 
 export const addressSchema = z.object(
@@ -49,10 +44,3 @@ export const workingTimeSchema = z
 export const paramsSchema = z.object({
   _id: objectIdSchema
 })
-
-export const querySchema = z
-  .object({
-    sort: z.string().optional(),
-    fields: z.string().optional()
-  })
-  .merge(paginationSchema)

@@ -1,4 +1,4 @@
-import { Schema, Types, model } from 'mongoose'
+import { Query, Schema, Types, model } from 'mongoose'
 import { Gender } from '~/constants/enums'
 import { Patient } from '~/types/patient.type'
 
@@ -7,7 +7,7 @@ export const COLLECTION_NAME = 'patients'
 
 const schema = new Schema<Patient>(
   {
-    fullName: {
+    name: {
       type: String,
       required: true
     },
@@ -25,12 +25,22 @@ const schema = new Schema<Patient>(
       required: true
     },
     bookedBy: { type: Types.ObjectId, ref: 'User' },
-    clinicArr: [{ type: Types.ObjectId, ref: 'Clinic' }]
+    deletedAt: {
+      type: Date,
+      default: null,
+      select: false
+    }
   },
   {
     timestamps: true,
     versionKey: false
   }
 )
+
+schema.index({ deletedAt: 1 })
+
+schema.pre(/^find|count/, function (this: Query<Patient, Patient>) {
+  this.where({ deletedAt: null })
+})
 
 export const PatientModel = model<Patient>(DOCUMENT_NAME, schema, COLLECTION_NAME)

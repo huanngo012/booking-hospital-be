@@ -6,17 +6,18 @@ export interface User extends BaseDocument {
   email: string
   password: string
   avatar?: string
-  address: string
+  address?: string
   role: string
   isBlocked: boolean
-  refreshToken?: string
   isVerified: boolean
+  refreshToken?: string
   emailToken?: string
   emailTokenExpires?: string
   passwordResetToken?: string
   passwordResetExpires?: string
   nameNormalized: string
 }
+
 export interface UserMethods {
   isCorrectPassword(password: string): Promise<boolean>
 }
@@ -24,6 +25,17 @@ export interface UserMethods {
 export interface UserQueryParams extends QueryParams {
   name?: string
   email?: string
+}
+
+export interface UserBody {
+  name: string
+  email: string
+  password: string
+  avatar?: string
+  address?: string
+  role?: string
+  isBlocked?: boolean
+  isVerified?: boolean
 }
 
 export type UserDocument = HydratedDocument<User>

@@ -5,13 +5,13 @@ import DoctorService from '~/services/doctor.service'
 
 const DoctorController = {
   getDoctors: asyncHandler(async (req: Request, res: Response) => {
-    const response = await DoctorService.getDoctorsService(req.query)
-    new OK({ data: response }).send(res)
+    const { data, pagination } = await DoctorService.getDoctorsService(req.query)
+    new OK({ data, pagination }).send(res)
   }),
 
-  getDoctor: asyncHandler(async (req: Request, res: Response) => {
-    const _id = req.params._id as string
-    const response = await DoctorService.getDoctorService(_id)
+  getDoctorBySlug: asyncHandler(async (req: Request, res: Response) => {
+    const slug = req.params.slug as string
+    const response = await DoctorService.getDoctorBySlugService(slug)
     new OK({ data: response }).send(res)
   }),
 

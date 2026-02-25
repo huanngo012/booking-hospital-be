@@ -1,6 +1,6 @@
 import z from 'zod'
 import { Gender } from '~/constants/enums'
-import { objectIdSchema, querySchema } from './common.schema'
+import { objectIdSchema, requiredString } from './common.schema'
 
 export const doctorBodySchema = z.object(
   {
@@ -9,15 +9,10 @@ export const doctorBodySchema = z.object(
       error: 'Vui lòng chọn giới tính'
     }),
     specialtyID: objectIdSchema,
-    medicalFacilityID: objectIdSchema
+    medicalFacilityID: objectIdSchema,
+    slug: requiredString('slug không được để trống')
   },
   {
     message: 'Vui lòng nhập dữ liệu'
   }
 )
-
-export const doctorQuerySchema = querySchema.extend({
-  name: z.string().optional()
-})
-
-export type DoctorQuery = z.infer<typeof doctorQuerySchema>

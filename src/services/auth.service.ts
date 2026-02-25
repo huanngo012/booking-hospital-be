@@ -68,7 +68,7 @@ const AuthService = {
     if (!user) {
       throw new NotFoundError('Người dùng không tồn tại')
     }
-    const { password, newPassword, avatar } = payload
+    const { password, newPassword } = payload
     if (password && newPassword) {
       const isPasswordValid = await user.isCorrectPassword(password)
       if (!isPasswordValid) {

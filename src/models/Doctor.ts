@@ -48,6 +48,10 @@ const schema = new Schema<Doctor>(
       type: Number,
       default: 0
     },
+    slug: {
+      type: String,
+      trim: true
+    },
     deletedAt: {
       type: Date,
       default: null,
@@ -60,10 +64,11 @@ const schema = new Schema<Doctor>(
   }
 )
 
+schema.index({ deletedAt: 1 })
+schema.index({ slug: 1 }, { unique: true, partialFilterExpression: { deletedAt: null } })
+
 schema.pre(/^find|count/, function (this: Query<Doctor, Doctor>) {
   this.where({ deletedAt: null })
 })
-
-schema.index({ deletedAt: 1 })
 
 export const DoctorModel = model<Doctor>(DOCUMENT_NAME, schema, COLLECTION_NAME)

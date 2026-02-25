@@ -1,6 +1,6 @@
 import { NotFoundError } from '~/core/error.response'
 import { SpecialtyModel } from '~/models/Specialty'
-import { Specialty, SpecialtyQueryParams } from '~/types/specialty.type'
+import { Specialty, SpecialtyBody, SpecialtyQueryParams } from '~/types/specialty.type'
 import { buildAggregateQuery, formatAggregateResult } from '~/utils/buildAggregateQuery'
 import { removeVietnameseTones } from '~/utils/helpers'
 
@@ -34,12 +34,12 @@ const SpecialtyService = {
     return response
   },
 
-  createSpecialtyService: async (payload: Specialty) => {
+  createSpecialtyService: async (payload: SpecialtyBody) => {
     const response = await SpecialtyModel.create(payload)
     return response
   },
 
-  updateSpecialtyService: async (_id: string, payload: Specialty) => {
+  updateSpecialtyService: async (_id: string, payload: Partial<SpecialtyBody>) => {
     const response = await SpecialtyModel.findById(_id)
     if (!response) {
       throw new NotFoundError('Chuyên khoa không tồn tại')

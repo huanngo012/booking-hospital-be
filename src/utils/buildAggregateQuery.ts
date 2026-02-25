@@ -7,12 +7,13 @@ interface LookupOption {
   localField: string
   foreignField: string
   as: string
+  unwind?: boolean
 }
 
 interface BuildAggregateOptions<TFilter extends Record<string, unknown>> {
   filter?: TFilter
   search?: Record<string, string>
-  lookup?: LookupOption
+  lookup?: LookupOption[]
   sort?: string
   fields?: string
   page?: number
@@ -50,21 +51,27 @@ export function buildAggregateQuery<TFilter extends Record<string, unknown>>({
     })
   }
 
-  if (lookup) {
-    pipeline.push({
-      $lookup: {
-        from: lookup.from,
-        localField: lookup.localField,
-        foreignField: lookup.foreignField,
-        as: lookup.as
+  if (lookup?.length) {
+    lookup.forEach((item) => {
+      pipeline.push({
+        $lookup: {
+          from: item.from,
+          localField: item.localField,
+          foreignField: item.foreignField,
+          as: item.as
+        }
+      })
+
+      if (item.unwind) {
+        pipeline.push({
+          $unwind: {
+            path: `$${item.as}`,
+            preserveNullAndEmptyArrays: true
+          }
+        })
       }
     })
-
-    pipeline.push({
-      $unwind: `$${lookup.as}`
-    })
   }
-
   if (search && Object.keys(search).length) {
     pipeline.push({
       $match: {
