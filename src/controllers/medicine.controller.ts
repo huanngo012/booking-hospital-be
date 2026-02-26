@@ -5,30 +5,35 @@ import MedicineService from '~/services/medicine.service'
 
 const MedicineController = {
   getMedicines: asyncHandler(async (req: Request, res: Response) => {
-    const { data, pagination } = await MedicineService.getMedicinesService(req.query)
+    const userId = req.user?._id.toString() as string
+    const { data, pagination } = await MedicineService.getMedicinesService(userId, req.query)
     new OK({ data, pagination }).send(res)
   }),
 
   getMedicineById: asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?._id.toString() as string
     const _id = req.params._id as string
-    const response = await MedicineService.getMedicineByIdService(_id)
+    const response = await MedicineService.getMedicineByIdService(userId, _id)
     new OK({ data: response }).send(res)
   }),
 
   createMedicine: asyncHandler(async (req: Request, res: Response) => {
-    const response = await MedicineService.createMedicineService(req.body)
+    const userId = req.user?._id.toString() as string
+    const response = await MedicineService.createMedicineService(userId, req.body)
     new CREATED({ data: response }).send(res)
   }),
 
   updateMedicine: asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?._id.toString() as string
     const _id = req.params._id as string
-    const response = await MedicineService.updateMedicineService(_id, req.body)
+    const response = await MedicineService.updateMedicineService(userId, _id, req.body)
     new OK({ data: response }).send(res)
   }),
 
   deleteMedicine: asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?._id.toString() as string
     const _id = req.params._id as string
-    await MedicineService.deleteMedicineService(_id)
+    await MedicineService.deleteMedicineService(userId, _id)
     new DELETED().send(res)
   })
 }

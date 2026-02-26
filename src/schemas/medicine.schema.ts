@@ -8,7 +8,6 @@ export const medicineBodySchema = z.object(
       .trim()
       .min(1, 'Vui lòng nhập đầy đủ')
       .max(50, 'Tag tối đa 50 ký tự'),
-    medicalFacilityID: objectIdSchema,
     specialtyID: objectIdSchema,
     price: z.number({ message: 'Vui lòng nhập đúng kiểu dữ liệu' }),
     stock: z.number({ message: 'Vui lòng nhập đúng kiểu dữ liệu' })

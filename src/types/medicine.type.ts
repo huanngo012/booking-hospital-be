@@ -9,6 +9,7 @@ export interface Medicine extends BaseDocument {
   price: number
   stock: number
   status?: boolean
+  nameNormalized: string
 }
 
 export interface MedicineQueryParams extends QueryParams {
@@ -17,7 +18,6 @@ export interface MedicineQueryParams extends QueryParams {
 
 export interface MedicineBody {
   name: string
-  medicalFacilityID: string
   specialtyID: string
   description?: string
   price: number
