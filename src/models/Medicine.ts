@@ -22,7 +22,8 @@ const schema = new Schema<Medicine>(
 
     specialtyID: {
       type: Types.ObjectId,
-      ref: 'Specialty'
+      ref: 'Specialty',
+      required: true
     },
 
     description: {
