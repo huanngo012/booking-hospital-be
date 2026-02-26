@@ -1,4 +1,4 @@
-import { Schema, Types, model } from 'mongoose'
+import { Query, Schema, Types, model } from 'mongoose'
 import { TimeSlotCode } from '~/constants/enums'
 import { Schedule } from '~/types/schedule.type'
 
@@ -11,22 +11,23 @@ const schema = new Schema<Schedule>(
       type: Types.ObjectId,
       ref: 'Doctor',
       required: true,
-      index: true
+      immutable: true
     },
 
     date: {
       type: Date,
-      required: true
+      required: true,
+      immutable: true
     },
 
     cost: {
       type: Number,
-      required: true
+      required: true,
+      min: 0
     },
 
     timeSlots: [
       {
-        _id: false,
         time: {
           type: String,
           enum: Object.values(TimeSlotCode),
@@ -38,7 +39,8 @@ const schema = new Schema<Schedule>(
         },
         bookedCount: {
           type: Number,
-          default: 0
+          default: 0,
+          immutable: true
         }
       }
     ],
@@ -46,6 +48,11 @@ const schema = new Schema<Schedule>(
     isRemote: {
       type: Boolean,
       default: false
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+      select: false
     }
   },
   {
@@ -53,5 +60,15 @@ const schema = new Schema<Schedule>(
     versionKey: false
   }
 )
+
+schema.index({ deletedAt: 1 })
+schema.index(
+  { doctorID: 1, date: 1 },
+  { unique: true, name: 'unique_doctor_schedule_per_day', partialFilterExpression: { deletedAt: null } }
+)
+
+schema.pre(/^find|count/, function (this: Query<Schedule, Schedule>) {
+  this.where({ deletedAt: null })
+})
 
 export const ScheduleModel = model<Schedule>(DOCUMENT_NAME, schema, COLLECTION_NAME)

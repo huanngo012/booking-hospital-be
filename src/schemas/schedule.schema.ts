@@ -4,14 +4,19 @@ import { objectIdSchema, timeSlotSchema } from './common.schema'
 export const scheduleBodySchema = z.object(
   {
     doctorID: objectIdSchema,
-    cost: z.number({ message: 'Vui lòng nhập đúng kiểu dữ liệu' }),
-    date: z.date().min(new Date(), 'Ngày phải lớn hơn hoặc bằng ngày hiện tại'),
+    cost: z.number({ message: 'Vui lòng nhập cost đúng kiểu dữ liệu' }),
+    date: z.coerce
+      .date({ message: 'Vui lòng nhập date đúng kiểu dữ liệu' })
+      .min(new Date(), 'Ngày phải lớn hơn hoặc bằng ngày hiện tại'),
     timeSlots: z.array(
-      z.object({
-        time: timeSlotSchema,
-        maxNumber: z.number({ message: 'Vui lòng nhập đúng kiểu dữ liệu' }).default(3),
-        bookedCount: z.number({ message: 'Vui lòng nhập đúng kiểu dữ liệu' }).default(0)
-      })
+      z
+        .object({
+          _id: objectIdSchema.optional(),
+          time: timeSlotSchema,
+          maxNumber: z.number({ message: 'Vui lòng nhập maxNumber đúng kiểu dữ liệu' }).default(3)
+        })
+        .strict(),
+      { message: 'Vui lòng nhập timeSlots đúng kiểu dữ liệu' }
     )
   },
   {

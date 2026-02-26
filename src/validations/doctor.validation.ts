@@ -1,6 +1,11 @@
 import { BadRequestError } from '~/core/error.response'
 import { DoctorModel } from '~/models/Doctor'
 
+const validateDoctor = async (_id: string) => {
+  const doctorExists = await DoctorModel.exists({ _id })
+  if (!doctorExists) throw new BadRequestError('Bác sĩ không tồn tại')
+}
+
 const validateDoctorProfileExists = async (userID: string) => {
   const doctor = await DoctorModel.exists({
     userID
@@ -24,4 +29,4 @@ const validateDoctorSlugExists = async (slug: string, currentDoctorId?: string) 
   }
 }
 
-export { validateDoctorProfileExists, validateDoctorSlugExists }
+export { validateDoctor, validateDoctorProfileExists, validateDoctorSlugExists }

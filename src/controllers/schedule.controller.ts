@@ -16,13 +16,15 @@ const ScheduleController = {
   }),
 
   createSchedule: asyncHandler(async (req: Request, res: Response) => {
-    const response = await ScheduleService.createScheduleService(req.body)
+    const hostId = req.user?._id.toString() as string
+    const response = await ScheduleService.createScheduleService(hostId, req.body)
     new CREATED({ data: response }).send(res)
   }),
 
   updateSchedule: asyncHandler(async (req: Request, res: Response) => {
     const _id = req.params._id as string
-    const response = await ScheduleService.updateScheduleService(_id, req.body)
+    const hostId = req.user?._id.toString() as string
+    const response = await ScheduleService.updateScheduleService(hostId, _id, req.body)
     new OK({ data: response }).send(res)
   }),
 

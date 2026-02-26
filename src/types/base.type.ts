@@ -42,6 +42,7 @@ export interface Rating {
 }
 
 export interface TimeSlot {
+  _id: Types.ObjectId
   time: TimeSlotCode
   maxNumber: number
   bookedCount: number

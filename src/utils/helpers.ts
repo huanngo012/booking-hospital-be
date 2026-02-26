@@ -12,6 +12,11 @@ export const removeVietnameseTones = (text: string = '') =>
     .replace(/Đ/g, 'D')
     .toLowerCase()
 
+export const normalizeDate = (date: Date | string) => {
+  const d = new Date(date)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
 export const extractPublicIdFromUrl = (url: string) => {
   try {
     const parts = url.split('/upload/')[1]
@@ -21,7 +26,7 @@ export const extractPublicIdFromUrl = (url: string) => {
     const publicId = withoutVersion.replace(/\.[^/.]+$/, '')
 
     return publicId
-  } catch (error) {
+  } catch {
     throw new Error('Invalid Cloudinary URL')
   }
 }
@@ -44,9 +49,11 @@ export const mapError = (error: unknown) => {
   if (error instanceof MongoServerError) {
     if (error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0]
+      let message = `${field} đã tồn tại`
+      if (error.message.includes('unique_doctor_schedule_per_day')) message = 'Bác sĩ đã có lịch trong ngày này'
       return {
         status: statusCodes.CONFLICT,
-        message: `${field} đã tồn tại`
+        message: message
       }
     }
     return {
