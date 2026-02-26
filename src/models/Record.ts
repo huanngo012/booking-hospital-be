@@ -35,7 +35,8 @@ const schema = new Schema<Record>(
 
     specialtyID: {
       type: Types.ObjectId,
-      ref: 'Specialty'
+      ref: 'Specialty',
+      required: true
     },
 
     diagnosis: {

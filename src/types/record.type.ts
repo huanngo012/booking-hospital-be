@@ -1,14 +1,29 @@
 import { HydratedDocument, Types } from 'mongoose'
-import { BaseDocument, MedicineItem } from './base.type'
+import { BaseDocument, MedicineItem, QueryParams } from './base.type'
 
 export interface Record extends BaseDocument {
   patientID: Types.ObjectId
   doctorID: Types.ObjectId
   bookingID: Types.ObjectId
   medicalFacilityID: Types.ObjectId
-  specialtyID?: Types.ObjectId
+  specialtyID: Types.ObjectId
   diagnosis?: string
-  medicines: MedicineItem[]
+  medicines?: MedicineItem[]
+  totalPrice: number
+}
+
+export interface RecordQueryParams extends QueryParams {
+  patientID?: string
+}
+
+export interface RecordBody {
+  patientID: string
+  doctorID: string
+  bookingID: string
+  medicalFacilityID: string
+  specialtyID: string
+  diagnosis?: string
+  medicines?: MedicineItem[]
   totalPrice: number
 }
 
