@@ -27,18 +27,6 @@ const schema = new Schema<Record>(
       unique: true
     },
 
-    medicalFacilityID: {
-      type: Types.ObjectId,
-      ref: 'MedicalFacility',
-      required: true
-    },
-
-    specialtyID: {
-      type: Types.ObjectId,
-      ref: 'Specialty',
-      required: true
-    },
-
     diagnosis: {
       type: String
     },
