@@ -46,9 +46,14 @@ const MedicineService = {
   },
 
   updateMedicineService: async (userId: string, _id: string, payload: Partial<MedicineBody>) => {
+    const medicalFacilityID = await validateHostHasMedicalFacility(userId)
     const response = await MedicineModel.findById(_id)
     if (!response) {
       throw new NotFoundError('Thuốc không tồn tại')
+    }
+    if (payload.specialtyID) {
+      await validateSpecialty(payload.specialtyID)
+      await validateSpecialtyBelongsToFacility(medicalFacilityID.toString(), payload.specialtyID)
     }
     Object.assign(response, payload)
     await response.save()
@@ -56,7 +61,12 @@ const MedicineService = {
   },
 
   deleteMedicineService: async (userId: string, _id: string) => {
-    const response = await MedicineModel.findOneAndUpdate({ _id }, { deletedAt: new Date() }, { new: true })
+    const medicalFacilityID = await validateHostHasMedicalFacility(userId)
+    const response = await MedicineModel.findOneAndUpdate(
+      { _id, medicalFacilityID },
+      { deletedAt: new Date() },
+      { new: true }
+    )
     if (!response) {
       throw new NotFoundError('Thuốc không tồn tại')
     }
