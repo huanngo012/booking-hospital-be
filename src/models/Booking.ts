@@ -10,17 +10,23 @@ const schema = new Schema<Booking>(
     patientID: {
       type: Types.ObjectId,
       ref: 'Patient',
-      required: true,
-      index: true
+      required: true
+    },
+    doctorID: {
+      type: Types.ObjectId,
+      ref: 'Doctor',
+      required: true
     },
 
     scheduleID: {
       type: Types.ObjectId,
       ref: 'Schedule',
-      required: true,
-      index: true
+      required: true
     },
-
+    date: {
+      type: Date,
+      required: true
+    },
     timeSlot: {
       type: String,
       required: true
@@ -39,8 +45,7 @@ const schema = new Schema<Booking>(
     status: {
       type: String,
       enum: Object.values(BookingStatus),
-      default: BookingStatus.PENDING,
-      index: true
+      default: BookingStatus.PENDING
     },
 
     qrCode: {
@@ -55,8 +60,7 @@ const schema = new Schema<Booking>(
 
     bookingPaid: {
       type: Boolean,
-      default: false,
-      index: true
+      default: false
     }
   },
   {
@@ -65,6 +69,9 @@ const schema = new Schema<Booking>(
   }
 )
 
-schema.index({ scheduleID: 1, timeSlot: 1 }, { unique: true })
+schema.index(
+  { patientID: 1, scheduleID: 1, timeSlot: 1 },
+  { unique: true, partialFilterExpression: { deletedAt: null } }
+)
 
 export const BookingModel = model<Booking>(DOCUMENT_NAME, schema, COLLECTION_NAME)

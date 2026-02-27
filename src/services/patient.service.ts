@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import { NotFoundError } from '~/core/error.response'
 import { PatientModel } from '~/models/Patient'
 import { Patient, PatientBody, PatientQueryParams } from '~/types/patient.type'
@@ -12,7 +13,7 @@ const PatientService = {
       filter: {
         deletedAt: null,
         ...filter,
-        ...(userId && { bookedBy: userId })
+        ...(userId && { bookedBy: new Types.ObjectId(userId) })
       },
       search: {
         ...(name && { nameNormalized: removeVietnameseTones(name) })

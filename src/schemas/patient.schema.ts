@@ -1,8 +1,5 @@
 import z from 'zod'
 import { Gender } from '~/constants/enums'
-import { objectIdSchema } from './common.schema'
-
-const phoneRegex = /^(0|\+84)(3|5|7|8|9)\d{8}$/
 
 export const patientBodySchema = z.object(
   {
@@ -20,7 +17,9 @@ export const patientBodySchema = z.object(
     gender: z.enum(Gender, {
       error: 'Vui lòng chọn giới tính'
     }),
-    bookedBy: objectIdSchema
+    dob: z.coerce
+      .date({ message: 'Vui lòng nhập date đúng kiểu dữ liệu' })
+      .max(new Date(), 'Ngày phải bé hơn hoặc bằng ngày hiện tại')
   },
   {
     message: 'Vui lòng nhập dữ liệu'

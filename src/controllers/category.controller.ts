@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import { Request, Response } from 'express'
-import CategoryService from '~/services/category.service'
 import { CREATED, DELETED, OK } from '~/core/success.response'
+import CategoryService from '~/services/category.service'
 
 const CategoryController = {
   getCategories: asyncHandler(async (req: Request, res: Response) => {

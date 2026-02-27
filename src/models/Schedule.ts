@@ -39,8 +39,7 @@ const schema = new Schema<Schedule>(
         },
         bookedCount: {
           type: Number,
-          default: 0,
-          immutable: true
+          default: 0
         }
       }
     ],

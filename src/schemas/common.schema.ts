@@ -23,7 +23,10 @@ export const ratingSchema = z.object({
   comment: z.string().optional()
 })
 
-export const timeSlotSchema = z.enum(TimeSlotCode)
+export const timeSlotSchema = z.enum(TimeSlotCode, {
+  error: 'Vui lòng chọn đúng giờ'
+})
+
 export const breakTimeSchema = z.object({
   start: timeSlotSchema,
   end: timeSlotSchema

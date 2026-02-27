@@ -8,6 +8,7 @@ export interface Patient extends BaseDocument {
   gender: Gender
   dob: Date
   bookedBy: Types.ObjectId
+  nameNormalized: string
 }
 
 export interface PatientQueryParams extends QueryParams {
