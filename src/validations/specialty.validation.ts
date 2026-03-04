@@ -9,11 +9,15 @@ const validateSpecialty = async (_id: string) => {
 const validateSpecialties = async (ids: string[]) => {
   if (!ids?.length) return
 
-  const count = await SpecialtyModel.countDocuments({
-    _id: { $in: ids }
-  })
+  const existing = await SpecialtyModel.find({ _id: { $in: ids } }, { _id: 1 }).lean()
 
-  if (count !== ids.length) throw new BadRequestError('Có chuyên khoa không tồn tại')
+  const existingSet = new Set(existing.map((item) => item._id.toString()))
+
+  const notFoundIds = ids.filter((id) => !existingSet.has(id))
+
+  if (notFoundIds.length) {
+    throw new BadRequestError(`Chuyên khoa không tồn tại: ${notFoundIds.join(', ')}`)
+  }
 }
 
 export { validateSpecialties, validateSpecialty }

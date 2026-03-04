@@ -28,6 +28,7 @@ export interface MedicalFacilityFiles {
 
 export interface MedicalFacilityQueryParams extends QueryParams {
   name?: string
+  categoryID?: string
 }
 
 export interface MedicalFacilityBody {

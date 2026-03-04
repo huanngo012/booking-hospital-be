@@ -14,14 +14,16 @@ import { validateUserRole } from '~/validations/user.validation'
 import { validateCategory } from '~/validations/category.validation'
 import { validateSpecialties } from '~/validations/specialty.validation'
 import { validateHostFacilityOwnership } from '~/validations/medical_facility.validation'
+import { Types } from 'mongoose'
 
 const MedicalFacilityService = {
   getMedicalFacilitiesService: async (queries: MedicalFacilityQueryParams) => {
-    const { limit, sort, page, fields, name, ...filter } = queries
+    const { limit, sort, page, fields, name, categoryID, ...filter } = queries
 
     const pipeline = buildAggregateQuery({
       filter: {
         deletedAt: null,
+        ...(categoryID && { categoryID: new Types.ObjectId(categoryID) }),
         ...filter
       },
       search: {
