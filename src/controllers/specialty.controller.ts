@@ -6,7 +6,12 @@ import SpecialtyService from '~/services/specialty.service'
 const SpecialtyController = {
   getSpecialties: asyncHandler(async (req: Request, res: Response) => {
     const { data, pagination } = await SpecialtyService.getSpecialiesService(req.query)
-    new OK({ data, pagination }).send(res)
+    new OK({
+      data: {
+        items: data,
+        pagination
+      }
+    }).send(res)
   }),
 
   getSpecialtyBySlug: asyncHandler(async (req: Request, res: Response) => {

@@ -6,7 +6,12 @@ import CategoryService from '~/services/category.service'
 const CategoryController = {
   getCategories: asyncHandler(async (req: Request, res: Response) => {
     const { data, pagination } = await CategoryService.getCategoriesService(req.query)
-    new OK({ data, pagination }).send(res)
+    new OK({
+      data: {
+        items: data,
+        pagination
+      }
+    }).send(res)
   }),
 
   getCategoryBySlug: asyncHandler(async (req: Request, res: Response) => {

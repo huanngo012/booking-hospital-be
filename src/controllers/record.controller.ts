@@ -6,7 +6,12 @@ import RecordService from '~/services/record.service'
 const RecordController = {
   getRecords: asyncHandler(async (req: Request, res: Response) => {
     const { data, pagination } = await RecordService.getRecordsService(req.query)
-    new OK({ data, pagination }).send(res)
+    new OK({
+      data: {
+        items: data,
+        pagination
+      }
+    }).send(res)
   }),
 
   getRecordById: asyncHandler(async (req: Request, res: Response) => {

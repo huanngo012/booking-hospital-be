@@ -7,7 +7,12 @@ const BookingController = {
   getBookings: asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?._id.toString() as string
     const { data, pagination } = await BookingService.getBookingsService(userId, req.query)
-    new OK({ data, pagination }).send(res)
+    new OK({
+      data: {
+        items: data,
+        pagination
+      }
+    }).send(res)
   }),
 
   getBookingById: asyncHandler(async (req: Request, res: Response) => {

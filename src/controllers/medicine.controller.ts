@@ -7,7 +7,12 @@ const MedicineController = {
   getMedicines: asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?._id.toString() as string
     const { data, pagination } = await MedicineService.getMedicinesService(userId, req.query)
-    new OK({ data, pagination }).send(res)
+    new OK({
+      data: {
+        items: data,
+        pagination
+      }
+    }).send(res)
   }),
 
   getMedicineById: asyncHandler(async (req: Request, res: Response) => {

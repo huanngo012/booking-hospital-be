@@ -6,7 +6,12 @@ import ScheduleService from '~/services/schedule.service'
 const ScheduleController = {
   getSchedules: asyncHandler(async (req: Request, res: Response) => {
     const { data, pagination } = await ScheduleService.getSchedulesService(req.query)
-    new OK({ data, pagination }).send(res)
+    new OK({
+      data: {
+        items: data,
+        pagination
+      }
+    }).send(res)
   }),
 
   getScheduleById: asyncHandler(async (req: Request, res: Response) => {

@@ -6,7 +6,12 @@ import DoctorService from '~/services/doctor.service'
 const DoctorController = {
   getDoctors: asyncHandler(async (req: Request, res: Response) => {
     const { data, pagination } = await DoctorService.getDoctorsService(req.query)
-    new OK({ data, pagination }).send(res)
+    new OK({
+      data: {
+        items: data,
+        pagination
+      }
+    }).send(res)
   }),
 
   getDoctorBySlug: asyncHandler(async (req: Request, res: Response) => {

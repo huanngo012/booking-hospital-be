@@ -6,7 +6,12 @@ import MedicalFacilityService from '~/services/medical_facility.service'
 const MedicalFacilityController = {
   getMedicalFacilities: asyncHandler(async (req: Request, res: Response) => {
     const { data, pagination } = await MedicalFacilityService.getMedicalFacilitiesService(req.query)
-    new OK({ data, pagination }).send(res)
+    new OK({
+      data: {
+        items: data,
+        pagination
+      }
+    }).send(res)
   }),
 
   getMedicalFacilityBySlug: asyncHandler(async (req: Request, res: Response) => {
