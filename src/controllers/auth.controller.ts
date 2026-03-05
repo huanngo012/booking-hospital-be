@@ -18,7 +18,12 @@ const AuthController = {
       sameSite: 'none'
     })
     res.setHeader('Authorization', `Bearer ${accessToken}`)
-    new OK({ data: user }).send(res)
+    new OK({
+      data: {
+        user,
+        accessToken
+      }
+    }).send(res)
   }),
 
   logout: asyncHandler(async (req: Request, res: Response) => {
