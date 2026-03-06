@@ -63,7 +63,7 @@ const AuthService = {
   },
 
   updateCurrentUser: async (_id: string, payload: ProfileBody) => {
-    const user = await UserModel.findById(_id)
+    const user = await UserModel.findById(_id).select('+password')
     if (!user) {
       throw new NotFoundError('Người dùng không tồn tại')
     }
