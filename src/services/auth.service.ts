@@ -1,8 +1,7 @@
-import jwt from 'jsonwebtoken'
-import { BadRequestError, NotFoundError } from '~/core/error.response'
+import { AuthFailureError, BadRequestError, NotFoundError } from '~/core/error.response'
 import { UserModel } from '~/models/User'
 import { LoginBody, ProfileBody, RegisterBody } from '~/schemas/auth.schema'
-import { generateAccessToken, generateRefreshToken } from '~/utils/jwt'
+import { generateAccessToken, generateRefreshToken, verifyToken } from '~/utils/jwt'
 
 const AuthService = {
   register: async (payload: RegisterBody) => {
@@ -33,20 +32,20 @@ const AuthService = {
     const user = await UserModel.findOneAndUpdate({ refreshToken }, { $unset: { refreshToken: 1 } }, { new: true })
 
     if (!user) {
-      throw new BadRequestError('RefreshToken không hợp lệ')
+      throw new AuthFailureError('RefreshToken không hợp lệ')
     }
 
     return user
   },
 
   refreshToken: async (refreshToken: string) => {
-    if (!refreshToken) {
-      throw new NotFoundError('Không tìm thấy RefreshToken')
-    }
-    const { _id } = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as { _id: string }
+    if (!refreshToken) throw new AuthFailureError('Không tìm thấy RefreshToken')
+
+    const { _id } = verifyToken({ token: refreshToken, secret: process.env.ACCESS_TOKEN_SECRET || '' })
+
     const user = await UserModel.findOne({ _id, refreshToken })
     if (!user) {
-      throw new NotFoundError('RefreshToken không hợp lệ')
+      throw new AuthFailureError('RefreshToken không hợp lệ')
     }
     const newAccessToken = generateAccessToken(user)
     const newRefreshToken = generateRefreshToken(user)

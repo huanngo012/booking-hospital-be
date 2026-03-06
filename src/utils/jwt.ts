@@ -19,7 +19,7 @@ const generateRefreshToken = (user: User) =>
 const verifyToken = ({ token, secret }: IVerifyToken) => {
   try {
     return jwt.verify(token, secret) as User
-  } catch (err) {
+  } catch {
     throw new AuthFailureError('Token hết hạn hoặc không hợp lệ')
   }
 }
