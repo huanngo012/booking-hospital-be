@@ -18,12 +18,13 @@ import { Types } from 'mongoose'
 
 const MedicalFacilityService = {
   getMedicalFacilitiesService: async (queries: MedicalFacilityQueryParams) => {
-    const { limit, sort, page, fields, name, categoryID, ...filter } = queries
+    const { limit, sort, page, fields, name, categoryID, province, ...filter } = queries
 
     const pipeline = buildAggregateQuery({
       filter: {
         deletedAt: null,
         ...(categoryID && { categoryID: new Types.ObjectId(categoryID) }),
+        ...(province && { 'address.province': province }),
         ...filter
       },
       search: {

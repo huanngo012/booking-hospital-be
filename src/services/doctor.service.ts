@@ -30,6 +30,13 @@ const DoctorService = {
           foreignField: '_id',
           as: 'user',
           unwind: true
+        },
+        {
+          from: 'medical_facilities',
+          localField: 'medicalFacilityID',
+          foreignField: '_id',
+          as: 'medical_facility',
+          unwind: true
         }
       ],
       search: {
