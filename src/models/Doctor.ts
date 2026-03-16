@@ -65,6 +65,7 @@ const schema = new Schema<Doctor>(
 )
 
 schema.index({ deletedAt: 1 })
+schema.index({ userID: 1 }, { unique: true, partialFilterExpression: { deletedAt: null } })
 schema.index({ slug: 1 }, { unique: true, partialFilterExpression: { deletedAt: null } })
 
 schema.pre(/^find|count/, function (this: Query<Doctor, Doctor>) {

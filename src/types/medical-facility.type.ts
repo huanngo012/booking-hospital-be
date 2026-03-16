@@ -29,6 +29,7 @@ export interface MedicalFacilityFiles {
 export interface MedicalFacilityQueryParams extends QueryParams {
   name?: string
   categoryID?: string
+  specialtyID?: string
   province?: string
 }
 
@@ -49,6 +50,11 @@ export interface MedicalFacilityBody {
   images?: string[]
   removeImageUrls?: string[]
   slug?: string
+}
+
+export interface MedicalFacilityRatingBody {
+  star: number
+  comment?: string
 }
 
 export type MedicalFacilityDocument = HydratedDocument<MedicalFacility>

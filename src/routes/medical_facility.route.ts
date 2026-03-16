@@ -4,7 +4,7 @@ import MedicalFacilityController from '~/controllers/medical_facility.controller
 import authorizeRoles, { verifyAccessToken } from '~/middlewares/auth.middleware'
 import { upload } from '~/middlewares/file.middleware'
 import { validateRequestBody, validateRequestParams } from '~/middlewares/validation.middleware'
-import { paramsSchema } from '~/schemas/common.schema'
+import { paramsSchema, ratingSchema } from '~/schemas/common.schema'
 import { medicalFacilityBodySchema } from '~/schemas/medical_facility.schema'
 
 const router = express.Router()
@@ -42,4 +42,20 @@ router.delete(
   validateRequestParams(paramsSchema),
   MedicalFacilityController.deleteMedicalFacility
 )
+
+router.put(
+  '/:_id/rating',
+  [verifyAccessToken],
+  validateRequestParams(paramsSchema),
+  validateRequestBody(ratingSchema),
+  MedicalFacilityController.ratingsMedicalFacility
+)
+
+router.delete(
+  '/:_id/rating',
+  [verifyAccessToken],
+  validateRequestParams(paramsSchema),
+  MedicalFacilityController.deleteRatingsMedicalFacility
+)
+
 export default router

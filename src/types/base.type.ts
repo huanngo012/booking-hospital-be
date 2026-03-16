@@ -38,7 +38,6 @@ export interface Rating {
   star: number
   postedBy: Types.ObjectId
   comment?: string
-  updatedAt: Date
 }
 
 export interface TimeSlot {

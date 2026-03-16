@@ -4,8 +4,10 @@ type SortOrder = 1 | -1
 
 interface LookupOption {
   from: string
-  localField: string
-  foreignField: string
+  localField?: string
+  foreignField?: string
+  let?: Record<string, unknown>
+  pipeline?: PipelineStage.Lookup['$lookup']['pipeline']
   as: string
   unwind?: boolean
 }
@@ -53,14 +55,25 @@ export function buildAggregateQuery<TFilter extends Record<string, unknown>>({
 
   if (lookup?.length) {
     lookup.forEach((item) => {
-      pipeline.push({
-        $lookup: {
-          from: item.from,
-          localField: item.localField,
-          foreignField: item.foreignField,
-          as: item.as
-        }
-      })
+      if (item.pipeline) {
+        pipeline.push({
+          $lookup: {
+            from: item.from,
+            let: item.let,
+            pipeline: item.pipeline,
+            as: item.as
+          }
+        })
+      } else {
+        pipeline.push({
+          $lookup: {
+            from: item.from,
+            localField: item.localField,
+            foreignField: item.foreignField,
+            as: item.as
+          }
+        })
+      }
 
       if (item.unwind) {
         pipeline.push({
@@ -72,6 +85,7 @@ export function buildAggregateQuery<TFilter extends Record<string, unknown>>({
       }
     })
   }
+
   if (search && Object.keys(search).length) {
     pipeline.push({
       $match: {

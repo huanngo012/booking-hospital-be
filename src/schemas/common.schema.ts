@@ -18,8 +18,7 @@ export const addressSchema = z.object(
 )
 
 export const ratingSchema = z.object({
-  userId: objectIdSchema,
-  score: z.number().min(1).max(5),
+  star: z.number().min(1).max(5),
   comment: z.string().optional()
 })
 

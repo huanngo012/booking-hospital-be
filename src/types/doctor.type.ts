@@ -17,6 +17,7 @@ export interface Doctor extends BaseDocument {
 export interface DoctorQueryParams extends QueryParams {
   name?: string
   specialtyID?: string
+  specialtyName?: string
   medicalFacilityID?: string
 }
 

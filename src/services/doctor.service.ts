@@ -8,13 +8,13 @@ import { User } from '~/types/user.type'
 import { buildAggregateQuery, formatAggregateResult } from '~/utils/buildAggregateQuery'
 import { removeVietnameseTones } from '~/utils/helpers'
 import { validateDoctorProfileExists, validateDoctorSlugExists } from '~/validations/doctor.validation'
-import { validateMedicalFacility } from '~/validations/medical_facility.validation'
+import { validateMedicalFacility, validateSpecialtyBelongsToFacility } from '~/validations/medical_facility.validation'
 import { validateSpecialty } from '~/validations/specialty.validation'
 import { validateUserRole } from '~/validations/user.validation'
 
 const DoctorService = {
   getDoctorsService: async (queries: DoctorQueryParams) => {
-    const { limit, sort, page, fields, name, medicalFacilityID, specialtyID, ...filter } = queries
+    const { limit, sort, page, fields, name, medicalFacilityID, specialtyID, specialtyName, ...filter } = queries
 
     const pipeline = buildAggregateQuery({
       filter: {
@@ -26,9 +26,31 @@ const DoctorService = {
       lookup: [
         {
           from: 'users',
-          localField: 'userID',
-          foreignField: '_id',
+          let: { userId: '$userID' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] }
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                name: 1,
+                email: 1,
+                avatar: 1,
+                nameNormalized: 1
+              }
+            }
+          ],
           as: 'user',
+          unwind: true
+        },
+        {
+          from: 'specialties',
+          localField: 'specialtyID',
+          foreignField: '_id',
+          as: 'specialty',
           unwind: true
         },
         {
@@ -40,7 +62,8 @@ const DoctorService = {
         }
       ],
       search: {
-        ...(name && { 'user.nameNormalized': removeVietnameseTones(name) })
+        ...(name && { 'user.nameNormalized': removeVietnameseTones(name) }),
+        ...(specialtyName && { 'specialty.name': specialtyName })
       },
       sort,
       fields,
@@ -72,6 +95,7 @@ const DoctorService = {
       })
     )
     await validateMedicalFacility(payload.medicalFacilityID)
+    await validateSpecialtyBelongsToFacility(payload.medicalFacilityID, payload.specialtyID)
     const response = await DoctorModel.create(payload)
     return response
   },
@@ -93,7 +117,13 @@ const DoctorService = {
         _id
       )
     if (payload.medicalFacilityID) await validateMedicalFacility(payload.medicalFacilityID)
-    if (payload.specialtyID) await validateSpecialty(payload.specialtyID)
+    if (payload.specialtyID) {
+      await validateSpecialty(payload.specialtyID)
+      await validateSpecialtyBelongsToFacility(
+        payload.medicalFacilityID ?? response.medicalFacilityID.toString(),
+        payload.specialtyID
+      )
+    }
 
     Object.assign(response, payload)
     await response.save()

@@ -7,7 +7,8 @@ import {
   MedicalFacility,
   MedicalFacilityBody,
   MedicalFacilityFiles,
-  MedicalFacilityQueryParams
+  MedicalFacilityQueryParams,
+  MedicalFacilityRatingBody
 } from '~/types/medical-facility.type'
 import { buildAggregateQuery, formatAggregateResult } from '~/utils/buildAggregateQuery'
 import { validateUserRole } from '~/validations/user.validation'
@@ -18,12 +19,13 @@ import { Types } from 'mongoose'
 
 const MedicalFacilityService = {
   getMedicalFacilitiesService: async (queries: MedicalFacilityQueryParams) => {
-    const { limit, sort, page, fields, name, categoryID, province, ...filter } = queries
+    const { limit, sort, page, fields, name, categoryID, specialtyID, province, ...filter } = queries
 
     const pipeline = buildAggregateQuery({
       filter: {
         deletedAt: null,
         ...(categoryID && { categoryID: new Types.ObjectId(categoryID) }),
+        ...(specialtyID && { specialtyID: new Types.ObjectId(specialtyID) }),
         ...(province && { 'address.province': province }),
         ...filter
       },
@@ -41,7 +43,7 @@ const MedicalFacilityService = {
   },
 
   getMedicalFacilityBySlugService: async (slug: string) => {
-    const response = await MedicalFacilityModel.findOne({ slug })
+    const response = await MedicalFacilityModel.findOne({ slug }).populate('specialtyID')
     if (!response) {
       throw new NotFoundError('Cơ sở y tế không tồn tại')
     }
@@ -114,6 +116,47 @@ const MedicalFacilityService = {
     if (!response) {
       throw new NotFoundError('Cơ sở y tế không tồn tại')
     }
+    return response
+  },
+
+  ratingsClinic: async (userId: string, _id: string, payload: MedicalFacilityRatingBody) => {
+    const { star, comment } = payload
+
+    const facility = await MedicalFacilityModel.findById(_id)
+    if (!facility) throw new NotFoundError('Cơ sở y tế không tồn tại')
+
+    const alreadyRated = facility.ratings.find((item) => item.postedBy.toString() === userId)
+
+    if (alreadyRated) {
+      alreadyRated.star = Number(star)
+      alreadyRated.comment = comment
+    } else {
+      facility.ratings.push({
+        star: Number(star),
+        comment,
+        postedBy: new Types.ObjectId(userId)
+      })
+    }
+
+    const ratingCount = facility.ratings.length
+    const sum = facility.ratings.reduce((acc, item) => acc + item.star, 0)
+    facility.totalRatings = Math.round((sum / ratingCount) * 10) / 10
+
+    const response = await facility.save()
+    return response
+  },
+
+  deleteRating: async (userId: string, _id: string) => {
+    const facility = await MedicalFacilityModel.findById(_id)
+    if (!facility) throw new NotFoundError('Cơ sở y tế không tồn tại')
+
+    facility.ratings = facility.ratings.filter((item) => item.postedBy.toString() !== userId)
+
+    const ratingCount = facility.ratings.length
+    const sum = facility.ratings.reduce((acc, item) => acc + item.star, 0)
+    facility.totalRatings = ratingCount ? Math.round((sum / ratingCount) * 10) / 10 : 0
+
+    const response = await facility.save()
     return response
   }
 }

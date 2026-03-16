@@ -1,8 +1,11 @@
+import { CloudinaryFolder } from '~/constants/enums'
 import { NotFoundError } from '~/core/error.response'
 import { UserModel } from '~/models/User'
 import { User, UserBody, UserQueryParams } from '~/types/user.type'
 import { buildAggregateQuery, formatAggregateResult } from '~/utils/buildAggregateQuery'
 import { removeVietnameseTones } from '~/utils/helpers'
+import ImageService from './image.service'
+import { validateEmailUnique } from '~/validations/user.validation'
 
 const UserService = {
   getUsersService: async (queries: UserQueryParams) => {
@@ -35,16 +38,21 @@ const UserService = {
     return response
   },
 
-  createUserService: async (payload: UserBody) => {
+  createUserService: async (payload: UserBody, file?: Express.Multer.File) => {
+    await validateEmailUnique(payload.email)
+    if (file) payload.avatar = await ImageService.uploadSingle(file, CloudinaryFolder.BOOKINGS_MEDICAL_FACILITY)
     const response = await UserModel.create(payload)
     return response
   },
 
-  updateUserService: async (_id: string, payload: Partial<UserBody>) => {
-    const response = await UserModel.findOneAndUpdate({ _id }, payload, { new: true })
+  updateUserService: async (_id: string, payload: Partial<UserBody>, file?: Express.Multer.File) => {
+    const response = await UserModel.findById(_id)
     if (!response) {
       throw new NotFoundError('Người dùng không tồn tại')
     }
+    if (file) payload.avatar = await ImageService.uploadSingle(file, CloudinaryFolder.BOOKINGS_MEDICAL_FACILITY)
+    Object.assign(response, payload)
+    await response.save()
     return response
   },
 

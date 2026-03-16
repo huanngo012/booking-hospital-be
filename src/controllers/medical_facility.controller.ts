@@ -35,6 +35,20 @@ const MedicalFacilityController = {
     const _id = req.params._id as string
     await MedicalFacilityService.deleteMedicalFacilityService(_id)
     new DELETED().send(res)
+  }),
+
+  ratingsMedicalFacility: asyncHandler(async (req: Request, res: Response) => {
+    const _id = req.params._id as string
+    const userId = req.user?._id.toString() as string
+    await MedicalFacilityService.ratingsClinic(userId, _id, req.body)
+    new DELETED().send(res)
+  }),
+
+  deleteRatingsMedicalFacility: asyncHandler(async (req: Request, res: Response) => {
+    const _id = req.params._id as string
+    const userId = req.user?._id.toString() as string
+    await MedicalFacilityService.deleteRating(userId, _id)
+    new DELETED().send(res)
   })
 }
 

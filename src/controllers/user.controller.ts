@@ -21,13 +21,13 @@ const UserController = {
   }),
 
   createUser: asyncHandler(async (req: Request, res: Response) => {
-    const response = await UserService.createUserService(req.body)
+    const response = await UserService.createUserService(req.body, req.file)
     new CREATED({ data: response }).send(res)
   }),
 
   updateUser: asyncHandler(async (req: Request, res: Response) => {
     const _id = req.params._id as string
-    const response = await UserService.updateUserService(_id, req.body)
+    const response = await UserService.updateUserService(_id, req.body, req.file)
     new OK({ data: response }).send(res)
   }),
 
