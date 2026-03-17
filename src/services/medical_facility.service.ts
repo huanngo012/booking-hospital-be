@@ -43,10 +43,22 @@ const MedicalFacilityService = {
   },
 
   getMedicalFacilityBySlugService: async (slug: string) => {
-    const response = await MedicalFacilityModel.findOne({ slug }).populate('specialtyID')
+    const response = await MedicalFacilityModel.findOne({ slug })
+      .populate('specialtyID')
+      .populate({
+        path: 'ratings',
+        populate: {
+          path: 'postedBy',
+          select: 'name avatar'
+        }
+      })
     if (!response) {
       throw new NotFoundError('Cơ sở y tế không tồn tại')
     }
+
+    response.ratings = response.ratings.sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    )
     return response
   },
 
@@ -130,11 +142,13 @@ const MedicalFacilityService = {
     if (alreadyRated) {
       alreadyRated.star = Number(star)
       alreadyRated.comment = comment
+      alreadyRated.updatedAt = new Date()
     } else {
       facility.ratings.push({
         star: Number(star),
         comment,
-        postedBy: new Types.ObjectId(userId)
+        postedBy: new Types.ObjectId(userId),
+        updatedAt: new Date()
       })
     }
 

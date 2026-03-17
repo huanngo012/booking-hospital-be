@@ -75,7 +75,7 @@ const schema = new Schema<MedicalFacility>(
         star: { type: Number },
         postedBy: { type: Types.ObjectId, ref: 'User' },
         comment: { type: String },
-        updatedAt: { type: Date, default: Date.now() }
+        updatedAt: { type: Date, default: Date.now }
       }
     ],
     totalRatings: {
