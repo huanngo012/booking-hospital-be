@@ -41,7 +41,7 @@ const schema = new Schema<Doctor>(
         star: { type: Number },
         postedBy: { type: Types.ObjectId, ref: 'User' },
         comment: { type: String },
-        updatedAt: { type: Date, default: Date.now() }
+        updatedAt: { type: Date, default: Date.now }
       }
     ],
     totalRatings: {
@@ -60,7 +60,9 @@ const schema = new Schema<Doctor>(
   },
   {
     timestamps: true,
-    versionKey: false
+    versionKey: false,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
   }
 )
 
@@ -70,6 +72,25 @@ schema.index({ slug: 1 }, { unique: true, partialFilterExpression: { deletedAt: 
 
 schema.pre(/^find|count/, function (this: Query<Doctor, Doctor>) {
   this.where({ deletedAt: null })
+})
+
+schema.virtual('user', {
+  ref: 'User',
+  localField: 'userID',
+  foreignField: '_id',
+  justOne: true
+})
+schema.virtual('medical_facility', {
+  ref: 'MedicalFacility',
+  localField: 'medicalFacilityID',
+  foreignField: '_id',
+  justOne: true
+})
+schema.virtual('specialty', {
+  ref: 'Specialty',
+  localField: 'specialtyID',
+  foreignField: '_id',
+  justOne: true
 })
 
 export const DoctorModel = model<Doctor>(DOCUMENT_NAME, schema, COLLECTION_NAME)

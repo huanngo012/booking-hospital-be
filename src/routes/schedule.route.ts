@@ -10,6 +10,8 @@ const router = express.Router()
 
 router.get('/', ScheduleController.getSchedules)
 
+router.get('/available-dates', ScheduleController.getAvailableDatesByMonth)
+
 router.get('/:_id', ScheduleController.getScheduleById)
 
 router.post(

@@ -37,6 +37,11 @@ const ScheduleController = {
     const _id = req.params._id as string
     await ScheduleService.deleteScheduleService(_id)
     new DELETED().send(res)
+  }),
+
+  getAvailableDatesByMonth: asyncHandler(async (req: Request, res: Response) => {
+    const response = await ScheduleService.getAvailableDatesByMonthService(req.query)
+    new OK({ data: response }).send(res)
   })
 }
 

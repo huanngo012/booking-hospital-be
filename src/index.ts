@@ -6,6 +6,12 @@ import dbConnect from './config/database'
 import routes from './routes'
 import z from 'zod'
 import { vi } from 'zod/locales'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 z.config(vi())
 

@@ -78,6 +78,19 @@ const DoctorService = {
 
   getDoctorBySlugService: async (slug: string) => {
     const response = await DoctorModel.findOne({ slug })
+      .populate({
+        path: 'user',
+        select: '_id name email avatar nameNormalized'
+      })
+      .populate('medical_facility')
+      .populate('specialty')
+      .populate({
+        path: 'ratings',
+        populate: {
+          path: 'postedBy',
+          select: 'name avatar'
+        }
+      })
     if (!response) {
       throw new NotFoundError('Hồ sơ bác sĩ không tồn tại')
     }

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { MongoServerError } from 'mongodb'
 import { ZodError } from 'zod'
 import { statusCodes } from '~/constants/status-codes'
@@ -13,9 +14,7 @@ export const removeVietnameseTones = (text: string = '') =>
     .toLowerCase()
 
 export const normalizeDate = (date: Date | string) => {
-  const d = new Date(date)
-  d.setHours(0, 0, 0, 0)
-  return d
+  return dayjs(date).tz('Asia/Ho_Chi_Minh').startOf('day').toDate()
 }
 export const extractPublicIdFromUrl = (url: string) => {
   try {

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { Types } from 'mongoose'
 import { BadRequestError, NotFoundError } from '~/core/error.response'
 import { ScheduleModel } from '~/models/Schedule'
@@ -124,6 +125,38 @@ const ScheduleService = {
       throw new NotFoundError('Lịch khám không tồn tại')
     }
     return response
+  },
+
+  getAvailableDatesByMonthService: async (queries: ScheduleQueryParams) => {
+    const { doctorID, month } = queries
+
+    const startOfMonth = dayjs(month).tz('Asia/Ho_Chi_Minh').startOf('month').toDate()
+
+    const endOfMonth = dayjs(month).tz('Asia/Ho_Chi_Minh').endOf('month').toDate()
+
+    const schedules = await ScheduleModel.aggregate([
+      {
+        $match: {
+          doctorID: new Types.ObjectId(doctorID),
+          deletedAt: null,
+          date: {
+            $gte: startOfMonth,
+            $lte: endOfMonth
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          date: 1
+        }
+      },
+      {
+        $sort: { date: 1 }
+      }
+    ])
+
+    return schedules.map((item) => dayjs(item.date).tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD'))
   }
 }
 

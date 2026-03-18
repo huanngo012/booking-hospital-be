@@ -13,6 +13,7 @@ export interface Schedule extends BaseDocument {
 export interface ScheduleQueryParams extends QueryParams {
   doctorID?: string
   date?: string
+  month?: string
 }
 
 export interface TimeSlotInput {
